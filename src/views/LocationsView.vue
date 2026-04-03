@@ -1,40 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useQuery } from '@urql/vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
+import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
+import { useUrlSyncedFilters } from '@/composables/useUrlSyncedFilters'
 import { LOCATIONS_QUERY } from '@/lib/queries'
 import { isNoResultsError } from '@/lib/errors'
 import { useFavoritesStore } from '@/stores/favorites'
 
-const route = useRoute()
-const router = useRouter()
+type LocationCard = {
+  id: string
+  name: string
+  type: string
+  dimension: string
+  residents: Array<{ id: string; name: string }>
+}
+
+type LocationsQueryData = {
+  locations?: {
+    results?: LocationCard[]
+    info?: {
+      pages?: number
+      count?: number
+    }
+  }
+}
+
 const favoritesStore = useFavoritesStore()
 favoritesStore.hydrate()
 
-const page = computed({
-  get: () => Number(route.query.page ?? 1),
-  set: (value: number) => void router.replace({ query: { ...route.query, page: String(value) } }),
+const { page, filters } = useUrlSyncedFilters({
+  name: '',
+  type: '',
+  dimension: '',
 })
-
-const name = computed({
-  get: () => String(route.query.name ?? ''),
-  set: (value: string) => void router.replace({ query: { ...route.query, page: '1', name: value || undefined } }),
-})
-
-const type = computed({
-  get: () => String(route.query.type ?? ''),
-  set: (value: string) => void router.replace({ query: { ...route.query, page: '1', type: value || undefined } }),
-})
-
-const dimension = computed({
-  get: () => String(route.query.dimension ?? ''),
-  set: (value: string) =>
-    void router.replace({
-      query: { ...route.query, page: '1', dimension: value || undefined },
-    }),
-})
+const { name, type, dimension } = filters
 
 const debouncedName = useDebouncedValue(name, 300)
 const debouncedType = useDebouncedValue(type, 300)
@@ -51,7 +51,18 @@ const hasShortTextFilter = computed(() => {
   )
 })
 
-const { data, fetching, error } = useQuery({
+const { items: locations, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+  LocationsQueryData,
+  {
+    page: number
+    filter: {
+      name?: string
+      type?: string
+      dimension?: string
+    }
+  },
+  LocationCard
+>({
   query: LOCATIONS_QUERY,
   variables: computed(() => ({
     page: page.value,
@@ -62,11 +73,12 @@ const { data, fetching, error } = useQuery({
     },
   })),
   pause: hasShortTextFilter,
+  select: (data) => ({
+    results: data?.locations?.results ?? [],
+    pages: data?.locations?.info?.pages ?? 1,
+    count: data?.locations?.info?.count ?? (data?.locations?.results?.length ?? 0),
+  }),
 })
-
-const locations = computed(() => data.value?.locations?.results ?? [])
-const totalPages = computed(() => data.value?.locations?.info?.pages ?? 1)
-const totalCount = computed(() => data.value?.locations?.info?.count ?? locations.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
 

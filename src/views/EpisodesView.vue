@@ -1,41 +1,41 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useQuery } from '@urql/vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
+import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
+import { useUrlSyncedFilters } from '@/composables/useUrlSyncedFilters'
 import { EPISODES_QUERY } from '@/lib/queries'
 import { isNoResultsError } from '@/lib/errors'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useCompareStore } from '@/stores/compare'
 
-const route = useRoute()
-const router = useRouter()
+type EpisodeCard = {
+  id: string
+  name: string
+  air_date: string
+  episode: string
+  characters: Array<{ id: string; name: string }>
+}
+
+type EpisodesQueryData = {
+  episodes?: {
+    results?: EpisodeCard[]
+    info?: {
+      pages?: number
+      count?: number
+    }
+  }
+}
+
 const favoritesStore = useFavoritesStore()
 const compareStore = useCompareStore()
 favoritesStore.hydrate()
 
-const page = computed({
-  get: () => Number(route.query.page ?? 1),
-  set: (value: number) => void router.replace({ query: { ...route.query, page: String(value) } }),
+const { page, filters } = useUrlSyncedFilters({
+  name: '',
+  season: '',
 })
-
-const name = computed({
-  get: () => String(route.query.name ?? ''),
-  set: (value: string) => void router.replace({ query: { ...route.query, page: '1', name: value || undefined } }),
-})
-
-const season = computed({
-  get: () => String(route.query.season ?? ''),
-  set: (value: string) =>
-    void router.replace({
-      query: {
-        ...route.query,
-        page: '1',
-        season: value || undefined,
-      },
-    }),
-})
+const { name, season } = filters
 
 const episodeCode = computed(() => {
   if (!season.value) return undefined
@@ -49,7 +49,17 @@ const hasShortTextFilter = computed(() => {
   return normalizedName.length > 0 && normalizedName.length < 2
 })
 
-const { data, fetching, error } = useQuery({
+const { items: episodes, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+  EpisodesQueryData,
+  {
+    page: number
+    filter: {
+      name?: string
+      episode?: string
+    }
+  },
+  EpisodeCard
+>({
   query: EPISODES_QUERY,
   variables: computed(() => ({
     page: page.value,
@@ -59,11 +69,12 @@ const { data, fetching, error } = useQuery({
     },
   })),
   pause: hasShortTextFilter,
+  select: (data) => ({
+    results: data?.episodes?.results ?? [],
+    pages: data?.episodes?.info?.pages ?? 1,
+    count: data?.episodes?.info?.count ?? (data?.episodes?.results?.length ?? 0),
+  }),
 })
-
-const episodes = computed(() => data.value?.episodes?.results ?? [])
-const totalPages = computed(() => data.value?.episodes?.info?.pages ?? 1)
-const totalCount = computed(() => data.value?.episodes?.info?.count ?? episodes.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
 

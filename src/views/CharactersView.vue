@@ -1,60 +1,48 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useQuery } from '@urql/vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
+import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
+import { useUrlSyncedFilters } from '@/composables/useUrlSyncedFilters'
 import { handleImageError } from '@/lib/image'
 import { CHARACTERS_QUERY } from '@/lib/queries'
 import { isNoResultsError } from '@/lib/errors'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useCompareStore } from '@/stores/compare'
 
-const route = useRoute()
-const router = useRouter()
+type CharacterCard = {
+  id: string
+  name: string
+  status: string
+  species: string
+  gender: string
+  image: string
+  origin?: {
+    name: string
+  }
+}
+
+type CharactersQueryData = {
+  characters?: {
+    results?: CharacterCard[]
+    info?: {
+      pages?: number
+      count?: number
+    }
+  }
+}
+
 const favoritesStore = useFavoritesStore()
 const compareStore = useCompareStore()
 favoritesStore.hydrate()
 
-const page = computed({
-  get: () => Number(route.query.page ?? 1),
-  set: (value: number) => {
-    void router.replace({
-      query: {
-        ...route.query,
-        page: String(value),
-      },
-    })
-  },
+const { page, filters, resetFilters } = useUrlSyncedFilters({
+  name: '',
+  status: '',
+  species: '',
+  gender: '',
 })
-
-const name = computed({
-  get: () => String(route.query.name ?? ''),
-  set: (value: string) => {
-    void router.replace({ query: { ...route.query, page: '1', name: value || undefined } })
-  },
-})
-
-const status = computed({
-  get: () => String(route.query.status ?? ''),
-  set: (value: string) => {
-    void router.replace({ query: { ...route.query, page: '1', status: value || undefined } })
-  },
-})
-
-const species = computed({
-  get: () => String(route.query.species ?? ''),
-  set: (value: string) => {
-    void router.replace({ query: { ...route.query, page: '1', species: value || undefined } })
-  },
-})
-
-const gender = computed({
-  get: () => String(route.query.gender ?? ''),
-  set: (value: string) => {
-    void router.replace({ query: { ...route.query, page: '1', gender: value || undefined } })
-  },
-})
+const { name, status, species, gender } = filters
 
 const filter = computed(() => ({
   name: debouncedName.value || undefined,
@@ -75,20 +63,29 @@ const hasShortTextFilter = computed(() => {
   )
 })
 
-const { data, fetching, error } = useQuery({
+const { items: characters, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+  CharactersQueryData,
+  {
+    page: number
+    filter: {
+      name?: string
+      status?: string
+      species?: string
+      gender?: string
+    }
+  },
+  CharacterCard
+>({
   query: CHARACTERS_QUERY,
   variables: computed(() => ({ page: page.value, filter: filter.value })),
   pause: hasShortTextFilter,
+  select: (data) => ({
+    results: data?.characters?.results ?? [],
+    pages: data?.characters?.info?.pages ?? 1,
+    count: data?.characters?.info?.count ?? (data?.characters?.results?.length ?? 0),
+  }),
 })
-
-const characters = computed(() => data.value?.characters?.results ?? [])
-const totalPages = computed(() => data.value?.characters?.info?.pages ?? 1)
-const totalCount = computed(() => data.value?.characters?.info?.count ?? characters.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
-
-const resetFilters = () => {
-  void router.replace({ query: { page: '1' } })
-}
 </script>
 
 <template>
