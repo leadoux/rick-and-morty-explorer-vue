@@ -38,13 +38,13 @@ The app intentionally keeps API querying at the view level through composables f
 ## Local Setup
 
 ```sh
-npm install
+pnpm install
 ```
 
 ## Development
 
 ```sh
-npm run dev
+pnpm dev
 ```
 
 The dev server proxies GraphQL requests through `/graphql` to avoid browser CORS issues during local development.
@@ -53,10 +53,10 @@ For deployed environments, you can optionally set `VITE_GRAPHQL_URL` to route th
 ## Quality Checks
 
 ```sh
-npm run lint
-npm run build
-npm run test:unit -- --run
-npm run test:e2e
+pnpm lint
+pnpm build
+pnpm test:unit -- --run
+pnpm test:e2e
 ```
 
 ## Cypress Smoke Coverage
@@ -78,5 +78,5 @@ This project is configured for Netlify via `netlify.toml`.
 You can still deploy the static output anywhere using `dist/` after:
 
 ```sh
-npm run build
+pnpm build
 ```
