@@ -75,7 +75,10 @@ const isCurrentPath = (path: string) => route.path === path
 }
 
 .nav-links a.active {
-  color: var(--accent);
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+  font-weight: 700;
 }
 
 .actions {
@@ -94,7 +97,8 @@ const isCurrentPath = (path: string) => route.path === path
   margin-left: 0.3rem;
   border-radius: 999px;
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-soft-text);
+  font-weight: 700;
   font-size: 0.8rem;
 }
 

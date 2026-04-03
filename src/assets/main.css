@@ -6,8 +6,9 @@
   --text-primary: #19202a;
   --text-secondary: #4f5b69;
   --text-muted: #6b7686;
-  --accent: #0c76e3;
-  --accent-soft: #e7f1fd;
+  --accent: #0a5fc2;
+  --accent-soft: #dbe9fb;
+  --accent-soft-text: #0c376b;
   --border: #dbe3ee;
   --danger: #ca2d4f;
 }
@@ -21,6 +22,7 @@
   --text-muted: #9dabbe;
   --accent: #74b6ff;
   --accent-soft: #1f3149;
+  --accent-soft-text: #dcecff;
   --border: #243141;
   --danger: #ff7091;
 }
@@ -74,7 +76,7 @@ h3 {
 
 .button.secondary {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-soft-text);
 }
 
 .button:disabled {
