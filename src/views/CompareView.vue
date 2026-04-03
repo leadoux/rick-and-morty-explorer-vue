@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { handleImageError } from '@/lib/image'
 import { useCompareStore } from '@/stores/compare'
 
@@ -18,12 +19,12 @@ const canCompare = computed(() => {
     <p class="description">Pick two items from explorer pages and compare them side-by-side here.</p>
 
     <div class="row">
-      <button class="button secondary" :disabled="tab === 'characters'" @click="tab = 'characters'">
+      <AppButton variant="secondary" :disabled="tab === 'characters'" @click="tab = 'characters'">
         Characters
-      </button>
-      <button class="button secondary" :disabled="tab === 'episodes'" @click="tab = 'episodes'">
+      </AppButton>
+      <AppButton variant="secondary" :disabled="tab === 'episodes'" @click="tab = 'episodes'">
         Episodes
-      </button>
+      </AppButton>
     </div>
 
     <p v-if="!canCompare" class="hint">Add two {{ tab }} to start comparing.</p>

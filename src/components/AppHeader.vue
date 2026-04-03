@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useCompareStore } from '@/stores/compare'
 import { usePreferencesStore } from '@/stores/preferences'
+import AppButton from './AppButton.vue'
 import GlobalSearch from './GlobalSearch.vue'
 
 const route = useRoute()
@@ -29,9 +30,9 @@ const isCurrentPath = (path: string) => route.path === path
       </nav>
       <div class="actions">
         <GlobalSearch />
-        <button class="button secondary" @click="preferencesStore.toggleTheme">
+        <AppButton variant="secondary" @click="preferencesStore.toggleTheme">
           {{ isDarkMode ? 'Light' : 'Dark' }} mode
-        </button>
+        </AppButton>
       </div>
     </div>
   </header>

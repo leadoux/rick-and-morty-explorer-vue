@@ -1,11 +1,15 @@
+<script setup lang="ts">
+import AppButton from '@/components/AppButton.vue'
+</script>
+
 <template>
   <section class="card">
     <h1>Page Not Found</h1>
     <p class="hint">The route does not exist. Return to the main explorer pages.</p>
     <div class="row">
-      <RouterLink class="button" to="/characters">Characters</RouterLink>
-      <RouterLink class="button secondary" to="/episodes">Episodes</RouterLink>
-      <RouterLink class="button secondary" to="/locations">Locations</RouterLink>
+      <AppButton to="/characters">Characters</AppButton>
+      <AppButton variant="secondary" to="/episodes">Episodes</AppButton>
+      <AppButton variant="secondary" to="/locations">Locations</AppButton>
     </div>
   </section>
 </template>

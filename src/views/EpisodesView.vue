@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
 import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
@@ -103,9 +104,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
         <p class="meta">Air date: {{ episode.air_date }}</p>
         <p class="meta">Characters: {{ episode.characters.length }}</p>
         <div class="row">
-          <RouterLink :to="`/episode/${episode.id}`" class="button">Open</RouterLink>
-          <button
-            class="button secondary"
+          <AppButton :to="`/episode/${episode.id}`">Open</AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               favoritesStore.toggle({
                 id: episode.id,
@@ -116,9 +117,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
             "
           >
             {{ favoritesStore.isFavorite(episode.id, 'episode') ? 'Unfavorite' : 'Favorite' }}
-          </button>
-          <button
-            class="button secondary"
+          </AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               compareStore.toggleEpisode({
                 id: episode.id,
@@ -127,9 +128,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 air_date: episode.air_date,
               })
             "
-          >
-            Compare
-          </button>
+          >Compare</AppButton>
         </div>
       </article>
     </div>

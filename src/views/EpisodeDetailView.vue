@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
 import { EPISODE_DETAIL_QUERY } from '@/lib/queries'
@@ -30,8 +31,8 @@ const episode = computed(() => data.value?.episode)
       <p class="meta">Character count: {{ episode.characters.length }}</p>
 
       <div class="row">
-        <button
-          class="button secondary"
+        <AppButton
+          variant="secondary"
           @click="
             favoritesStore.toggle({
               id: episode.id,
@@ -40,11 +41,9 @@ const episode = computed(() => data.value?.episode)
               subtitle: `${episode.episode} - ${episode.air_date}`,
             })
           "
-        >
-          {{ favoritesStore.isFavorite(episode.id, 'episode') ? 'Unfavorite' : 'Favorite' }}
-        </button>
-        <button
-          class="button secondary"
+        >{{ favoritesStore.isFavorite(episode.id, 'episode') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+        <AppButton
+          variant="secondary"
           @click="
             compareStore.toggleEpisode({
               id: episode.id,
@@ -53,9 +52,7 @@ const episode = computed(() => data.value?.episode)
               air_date: episode.air_date,
             })
           "
-        >
-          Compare
-        </button>
+        >Compare</AppButton>
       </div>
 
       <h2>Characters</h2>
@@ -72,7 +69,7 @@ const episode = computed(() => data.value?.episode)
           </RouterLink>
           <h3>{{ character.name }}</h3>
           <p class="meta">{{ character.species }} - {{ character.status }}</p>
-          <RouterLink class="button" :to="`/character/${character.id}`">Open</RouterLink>
+          <AppButton :to="`/character/${character.id}`">Open</AppButton>
         </article>
       </div>
     </article>

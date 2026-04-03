@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppButton from './AppButton.vue'
+
 const page = defineModel<number>({ required: true })
 
 const props = defineProps<{
@@ -8,11 +10,9 @@ const props = defineProps<{
 
 <template>
   <div class="pagination card">
-    <button class="button secondary" :disabled="page <= 1" @click="page = page - 1">Previous</button>
+    <AppButton variant="secondary" :disabled="page <= 1" @click="page = page - 1">Previous</AppButton>
     <p>Page {{ page }} / {{ props.totalPages }}</p>
-    <button class="button secondary" :disabled="page >= props.totalPages" @click="page = page + 1">
-      Next
-    </button>
+    <AppButton variant="secondary" :disabled="page >= props.totalPages" @click="page = page + 1">Next</AppButton>
   </div>
 </template>
 

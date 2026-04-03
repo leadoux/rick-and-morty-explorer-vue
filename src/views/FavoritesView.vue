@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { handleImageError } from '@/lib/image'
 import { useFavoritesStore } from '@/stores/favorites'
 
@@ -42,8 +43,8 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
         <h3>{{ item.name }}</h3>
         <p class="meta">{{ item.subtitle }}</p>
         <div class="row">
-          <RouterLink class="button" :to="pathFor(item.kind, item.id)">Open</RouterLink>
-          <button class="button secondary" @click="favoritesStore.toggle(item)">Remove</button>
+          <AppButton :to="pathFor(item.kind, item.id)">Open</AppButton>
+          <AppButton variant="secondary" @click="favoritesStore.toggle(item)">Remove</AppButton>
         </div>
       </article>
     </div>

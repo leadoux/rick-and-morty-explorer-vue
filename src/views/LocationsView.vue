@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
 import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
@@ -106,9 +107,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
         <p class="meta">Dimension: {{ location.dimension || 'Unknown' }}</p>
         <p class="meta">Residents: {{ location.residents.length }}</p>
         <div class="row">
-          <RouterLink :to="`/location/${location.id}`" class="button">Open</RouterLink>
-          <button
-            class="button secondary"
+          <AppButton :to="`/location/${location.id}`">Open</AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               favoritesStore.toggle({
                 id: location.id,
@@ -117,9 +118,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 subtitle: `${location.type || 'Unknown'} - ${location.dimension || 'Unknown'}`,
               })
             "
-          >
-            {{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}
-          </button>
+          >{{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}</AppButton>
         </div>
       </article>
     </div>

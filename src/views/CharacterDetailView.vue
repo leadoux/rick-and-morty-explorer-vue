@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
 import { CHARACTER_DETAIL_QUERY } from '@/lib/queries'
@@ -41,8 +42,8 @@ const character = computed(() => data.value?.character)
         <p class="meta">Last known location: {{ character.location?.name || 'Unknown' }}</p>
 
         <div class="row">
-          <button
-            class="button secondary"
+          <AppButton
+            variant="secondary"
             @click="
               favoritesStore.toggle({
                 id: character.id,
@@ -52,11 +53,9 @@ const character = computed(() => data.value?.character)
                 image: character.image,
               })
             "
-          >
-            {{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}
-          </button>
-          <button
-            class="button secondary"
+          >{{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               compareStore.toggleCharacter({
                 id: character.id,
@@ -66,9 +65,7 @@ const character = computed(() => data.value?.character)
                 species: character.species,
               })
             "
-          >
-            Compare
-          </button>
+          >Compare</AppButton>
         </div>
 
         <h2>Episode Appearances</h2>

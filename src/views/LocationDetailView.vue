@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
 import { LOCATION_DETAIL_QUERY } from '@/lib/queries'
@@ -27,8 +28,8 @@ const location = computed(() => data.value?.location)
       <p class="meta">Type: {{ location.type || 'Unknown' }}</p>
       <p class="meta">Dimension: {{ location.dimension || 'Unknown' }}</p>
       <p class="meta">Residents: {{ location.residents.length }}</p>
-      <button
-        class="button secondary"
+      <AppButton
+        variant="secondary"
         @click="
           favoritesStore.toggle({
             id: location.id,
@@ -37,9 +38,7 @@ const location = computed(() => data.value?.location)
             subtitle: `${location.type || 'Unknown'} - ${location.dimension || 'Unknown'}`,
           })
         "
-      >
-        {{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}
-      </button>
+      >{{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}</AppButton>
 
       <h2>Residents</h2>
       <div class="grid">
@@ -55,7 +54,7 @@ const location = computed(() => data.value?.location)
           </RouterLink>
           <h3>{{ resident.name }}</h3>
           <p class="meta">{{ resident.species }} - {{ resident.status }}</p>
-          <RouterLink class="button" :to="`/character/${resident.id}`">Open</RouterLink>
+          <AppButton :to="`/character/${resident.id}`">Open</AppButton>
         </article>
       </div>
     </article>

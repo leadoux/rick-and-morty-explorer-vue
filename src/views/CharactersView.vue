@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppButton from '@/components/AppButton.vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
 import { usePaginatedQuery } from '@/composables/usePaginatedQuery'
@@ -109,7 +110,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
         <option value="genderless">Genderless</option>
         <option value="unknown">Unknown</option>
       </select>
-      <button class="button secondary" @click="resetFilters">Reset</button>
+      <AppButton variant="secondary" @click="resetFilters">Reset</AppButton>
     </div>
 
     <p v-if="fetching" class="hint">Loading characters...</p>
@@ -134,9 +135,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
         <p class="meta">{{ character.species }} - {{ character.status }}</p>
         <p class="meta">Origin: {{ character.origin?.name || 'Unknown' }}</p>
         <div class="row">
-          <RouterLink :to="`/character/${character.id}`" class="button">Open</RouterLink>
-          <button
-            class="button secondary"
+          <AppButton :to="`/character/${character.id}`">Open</AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               favoritesStore.toggle({
                 id: character.id,
@@ -148,9 +149,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
             "
           >
             {{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}
-          </button>
-          <button
-            class="button secondary"
+          </AppButton>
+          <AppButton
+            variant="secondary"
             @click="
               compareStore.toggleCharacter({
                 id: character.id,
@@ -160,9 +161,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 species: character.species,
               })
             "
-          >
-            Compare
-          </button>
+          >Compare</AppButton>
         </div>
       </article>
     </div>
