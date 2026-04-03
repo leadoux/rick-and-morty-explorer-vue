@@ -44,13 +44,15 @@ const location = computed(() => data.value?.location)
       <h2>Residents</h2>
       <div class="grid">
         <article v-for="resident in location.residents" :key="resident.id" class="card resident">
-          <img
-            :src="resident.image"
-            :alt="resident.name"
-            loading="lazy"
-            decoding="async"
-            @error="handleImageError"
-          />
+          <RouterLink class="image-link" :to="`/character/${resident.id}`" :aria-label="`Open ${resident.name}`">
+            <img
+              :src="resident.image"
+              :alt="resident.name"
+              loading="lazy"
+              decoding="async"
+              @error="handleImageError"
+            />
+          </RouterLink>
           <h3>{{ resident.name }}</h3>
           <p class="meta">{{ resident.species }} - {{ resident.status }}</p>
           <RouterLink class="button" :to="`/character/${resident.id}`">Open</RouterLink>
@@ -72,5 +74,9 @@ button {
 .resident img {
   width: 100%;
   border-radius: 0.7rem;
+}
+
+.image-link {
+  display: block;
 }
 </style>

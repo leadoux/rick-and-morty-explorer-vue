@@ -24,14 +24,20 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
 
     <div v-else class="grid">
       <article v-for="item in favoritesStore.items" :key="`${item.kind}:${item.id}`" class="card">
-        <img
+        <RouterLink
           v-if="item.image"
-          :src="item.image"
-          :alt="item.name"
-          loading="lazy"
-          decoding="async"
-          @error="handleImageError"
-        />
+          class="image-link"
+          :to="pathFor(item.kind, item.id)"
+          :aria-label="`Open ${item.name}`"
+        >
+          <img
+            :src="item.image"
+            :alt="item.name"
+            loading="lazy"
+            decoding="async"
+            @error="handleImageError"
+          />
+        </RouterLink>
         <h3>{{ item.name }}</h3>
         <p class="meta">{{ item.subtitle }}</p>
         <div class="row">
@@ -52,6 +58,10 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
 img {
   width: 100%;
   border-radius: 0.7rem;
+}
+
+.image-link {
+  display: block;
 }
 
 .row {

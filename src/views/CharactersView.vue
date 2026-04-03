@@ -121,14 +121,16 @@ const resetFilters = () => {
 
     <div v-else class="grid">
       <article v-for="character in characters" :key="character.id" class="card">
-        <img
-          :src="character.image"
-          :alt="character.name"
-          class="avatar"
-          loading="lazy"
-          decoding="async"
-          @error="handleImageError"
-        />
+        <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
+          <img
+            :src="character.image"
+            :alt="character.name"
+            class="avatar"
+            loading="lazy"
+            decoding="async"
+            @error="handleImageError"
+          />
+        </RouterLink>
         <h3>{{ character.name }}</h3>
         <p class="meta">{{ character.species }} - {{ character.status }}</p>
         <p class="meta">Origin: {{ character.origin?.name || 'Unknown' }}</p>
@@ -189,6 +191,10 @@ const resetFilters = () => {
   width: 100%;
   border-radius: 0.7rem;
   margin-bottom: 0.5rem;
+}
+
+.image-link {
+  display: block;
 }
 
 .meta {

@@ -61,13 +61,15 @@ const episode = computed(() => data.value?.episode)
       <h2>Characters</h2>
       <div class="grid">
         <article v-for="character in episode.characters" :key="character.id" class="card resident">
-          <img
-            :src="character.image"
-            :alt="character.name"
-            loading="lazy"
-            decoding="async"
-            @error="handleImageError"
-          />
+          <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
+            <img
+              :src="character.image"
+              :alt="character.name"
+              loading="lazy"
+              decoding="async"
+              @error="handleImageError"
+            />
+          </RouterLink>
           <h3>{{ character.name }}</h3>
           <p class="meta">{{ character.species }} - {{ character.status }}</p>
           <RouterLink class="button" :to="`/character/${character.id}`">Open</RouterLink>
@@ -91,5 +93,9 @@ const episode = computed(() => data.value?.episode)
 .resident img {
   width: 100%;
   border-radius: 0.7rem;
+}
+
+.image-link {
+  display: block;
 }
 </style>
