@@ -29,6 +29,7 @@ const canCompare = computed(() => {
     <p v-if="!canCompare" class="hint">Add two {{ tab }} to start comparing.</p>
 
     <div v-else-if="tab === 'characters'" class="compare-grid">
+      <h2 class="section-heading">Character comparison ({{ compareStore.characters.length }})</h2>
       <article v-for="character in compareStore.characters" :key="character.id" class="card">
         <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
           <img
@@ -46,6 +47,7 @@ const canCompare = computed(() => {
     </div>
 
     <div v-else class="compare-grid">
+      <h2 class="section-heading">Episode comparison ({{ compareStore.episodes.length }})</h2>
       <article v-for="episode in compareStore.episodes" :key="episode.id" class="card">
         <h3>{{ episode.name }}</h3>
         <p class="meta">Episode: {{ episode.episode }}</p>

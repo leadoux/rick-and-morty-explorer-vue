@@ -63,6 +63,7 @@ const { data, fetching, error } = useQuery({
 
 const episodes = computed(() => data.value?.episodes?.results ?? [])
 const totalPages = computed(() => data.value?.episodes?.info?.pages ?? 1)
+const totalCount = computed(() => data.value?.episodes?.info?.count ?? episodes.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
 
@@ -85,6 +86,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p v-else-if="!episodes.length" class="hint">No episodes match these filters.</p>
 
     <div v-else class="grid">
+      <h2 class="section-heading">Episode results ({{ totalCount }})</h2>
       <article v-for="episode in episodes" :key="episode.id" class="card">
         <h3>{{ episode.episode }} - {{ episode.name }}</h3>
         <p class="meta">Air date: {{ episode.air_date }}</p>

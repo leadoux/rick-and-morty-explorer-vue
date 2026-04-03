@@ -83,6 +83,7 @@ const { data, fetching, error } = useQuery({
 
 const characters = computed(() => data.value?.characters?.results ?? [])
 const totalPages = computed(() => data.value?.characters?.info?.pages ?? 1)
+const totalCount = computed(() => data.value?.characters?.info?.count ?? characters.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 
 const resetFilters = () => {
@@ -120,6 +121,7 @@ const resetFilters = () => {
     <p v-else-if="!characters.length" class="hint">No characters match these filters.</p>
 
     <div v-else class="grid">
+      <h2 class="section-heading">Character results ({{ totalCount }})</h2>
       <article v-for="character in characters" :key="character.id" class="card">
         <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
           <img

@@ -23,6 +23,7 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
     <p v-if="!hasFavorites" class="hint">No favorites yet. Save some items from the explorers.</p>
 
     <div v-else class="grid">
+      <h2 class="section-heading">Saved favorites ({{ favoritesStore.items.length }})</h2>
       <article v-for="item in favoritesStore.items" :key="`${item.kind}:${item.id}`" class="card">
         <RouterLink
           v-if="item.image"

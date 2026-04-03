@@ -66,6 +66,7 @@ const { data, fetching, error } = useQuery({
 
 const locations = computed(() => data.value?.locations?.results ?? [])
 const totalPages = computed(() => data.value?.locations?.info?.pages ?? 1)
+const totalCount = computed(() => data.value?.locations?.info?.count ?? locations.value.length)
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
 
@@ -86,6 +87,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p v-else-if="!locations.length" class="hint">No locations match these filters.</p>
 
     <div v-else class="grid">
+      <h2 class="section-heading">Location results ({{ totalCount }})</h2>
       <article v-for="location in locations" :key="location.id" class="card">
         <h3>{{ location.name }}</h3>
         <p class="meta">Type: {{ location.type || 'Unknown' }}</p>
