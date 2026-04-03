@@ -1,0 +1,119 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useQuery } from '@urql/vue'
+import { handleImageError } from '@/lib/image'
+import { CHARACTER_DETAIL_QUERY } from '@/lib/queries'
+import { useFavoritesStore } from '@/stores/favorites'
+import { useCompareStore } from '@/stores/compare'
+
+const props = defineProps<{ id: string }>()
+const favoritesStore = useFavoritesStore()
+const compareStore = useCompareStore()
+favoritesStore.hydrate()
+
+const { data, fetching, error } = useQuery({
+  query: CHARACTER_DETAIL_QUERY,
+  variables: computed(() => ({ id: props.id })),
+})
+
+const character = computed(() => data.value?.character)
+</script>
+
+<template>
+  <section>
+    <p v-if="fetching" class="hint">Loading character...</p>
+    <p v-else-if="error" class="error">Unable to load this character.</p>
+
+    <article v-else-if="character" class="card detail">
+      <img
+        :src="character.image"
+        :alt="character.name"
+        loading="eager"
+        decoding="async"
+        @error="handleImageError"
+      />
+      <div>
+        <h1>{{ character.name }}</h1>
+        <p class="meta">Status: {{ character.status }}</p>
+        <p class="meta">Species: {{ character.species }}</p>
+        <p class="meta">Gender: {{ character.gender }}</p>
+        <p class="meta">Origin: {{ character.origin?.name || 'Unknown' }}</p>
+        <p class="meta">Last known location: {{ character.location?.name || 'Unknown' }}</p>
+
+        <div class="row">
+          <button
+            class="button secondary"
+            @click="
+              favoritesStore.toggle({
+                id: character.id,
+                kind: 'character',
+                name: character.name,
+                subtitle: `${character.species} - ${character.status}`,
+                image: character.image,
+              })
+            "
+          >
+            {{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}
+          </button>
+          <button
+            class="button secondary"
+            @click="
+              compareStore.toggleCharacter({
+                id: character.id,
+                name: character.name,
+                image: character.image,
+                status: character.status,
+                species: character.species,
+              })
+            "
+          >
+            Compare
+          </button>
+        </div>
+
+        <h2>Episode Appearances</h2>
+        <ul>
+          <li v-for="episode in character.episode" :key="episode.id">
+            <RouterLink :to="`/episode/${episode.id}`">{{ episode.name }}</RouterLink>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </section>
+</template>
+
+<style scoped>
+.detail {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+img {
+  width: min(100%, 360px);
+  border-radius: 0.8rem;
+}
+
+.meta {
+  color: var(--text-secondary);
+  margin: 0.2rem 0;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0;
+  flex-wrap: wrap;
+}
+
+ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+@media (min-width: 900px) {
+  .detail {
+    grid-template-columns: 360px 1fr;
+  }
+}
+</style>

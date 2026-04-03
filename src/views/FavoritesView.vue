@@ -1,0 +1,62 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { handleImageError } from '@/lib/image'
+import { useFavoritesStore } from '@/stores/favorites'
+
+const favoritesStore = useFavoritesStore()
+favoritesStore.hydrate()
+
+const hasFavorites = computed(() => favoritesStore.items.length > 0)
+
+const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
+  if (kind === 'character') return `/character/${id}`
+  if (kind === 'episode') return `/episode/${id}`
+  return `/location/${id}`
+}
+</script>
+
+<template>
+  <section>
+    <h1>Favorites</h1>
+    <p class="description">Your saved picks are persisted locally and available after refresh.</p>
+
+    <p v-if="!hasFavorites" class="hint">No favorites yet. Save some items from the explorers.</p>
+
+    <div v-else class="grid">
+      <article v-for="item in favoritesStore.items" :key="`${item.kind}:${item.id}`" class="card">
+        <img
+          v-if="item.image"
+          :src="item.image"
+          :alt="item.name"
+          loading="lazy"
+          decoding="async"
+          @error="handleImageError"
+        />
+        <h3>{{ item.name }}</h3>
+        <p class="meta">{{ item.subtitle }}</p>
+        <div class="row">
+          <RouterLink class="button" :to="pathFor(item.kind, item.id)">Open</RouterLink>
+          <button class="button secondary" @click="favoritesStore.toggle(item)">Remove</button>
+        </div>
+      </article>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.description,
+.meta {
+  color: var(--text-secondary);
+}
+
+img {
+  width: 100%;
+  border-radius: 0.7rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+</style>

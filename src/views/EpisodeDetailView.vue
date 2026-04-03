@@ -1,0 +1,95 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useQuery } from '@urql/vue'
+import { handleImageError } from '@/lib/image'
+import { EPISODE_DETAIL_QUERY } from '@/lib/queries'
+import { useFavoritesStore } from '@/stores/favorites'
+import { useCompareStore } from '@/stores/compare'
+
+const props = defineProps<{ id: string }>()
+const favoritesStore = useFavoritesStore()
+const compareStore = useCompareStore()
+favoritesStore.hydrate()
+
+const { data, fetching, error } = useQuery({
+  query: EPISODE_DETAIL_QUERY,
+  variables: computed(() => ({ id: props.id })),
+})
+
+const episode = computed(() => data.value?.episode)
+</script>
+
+<template>
+  <section>
+    <p v-if="fetching" class="hint">Loading episode...</p>
+    <p v-else-if="error" class="error">Unable to load this episode.</p>
+
+    <article v-else-if="episode" class="card">
+      <h1>{{ episode.episode }} - {{ episode.name }}</h1>
+      <p class="meta">Air date: {{ episode.air_date }}</p>
+      <p class="meta">Character count: {{ episode.characters.length }}</p>
+
+      <div class="row">
+        <button
+          class="button secondary"
+          @click="
+            favoritesStore.toggle({
+              id: episode.id,
+              kind: 'episode',
+              name: episode.name,
+              subtitle: `${episode.episode} - ${episode.air_date}`,
+            })
+          "
+        >
+          {{ favoritesStore.isFavorite(episode.id, 'episode') ? 'Unfavorite' : 'Favorite' }}
+        </button>
+        <button
+          class="button secondary"
+          @click="
+            compareStore.toggleEpisode({
+              id: episode.id,
+              name: episode.name,
+              episode: episode.episode,
+              air_date: episode.air_date,
+            })
+          "
+        >
+          Compare
+        </button>
+      </div>
+
+      <h2>Characters</h2>
+      <div class="grid">
+        <article v-for="character in episode.characters" :key="character.id" class="card resident">
+          <img
+            :src="character.image"
+            :alt="character.name"
+            loading="lazy"
+            decoding="async"
+            @error="handleImageError"
+          />
+          <h3>{{ character.name }}</h3>
+          <p class="meta">{{ character.species }} - {{ character.status }}</p>
+          <RouterLink class="button" :to="`/character/${character.id}`">Open</RouterLink>
+        </article>
+      </div>
+    </article>
+  </section>
+</template>
+
+<style scoped>
+.meta {
+  color: var(--text-secondary);
+}
+
+.row {
+  margin: 0.8rem 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.resident img {
+  width: 100%;
+  border-radius: 0.7rem;
+}
+</style>
