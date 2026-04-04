@@ -3,7 +3,7 @@
 [![CI](https://github.com/leadoux/rick-and-morty-explorer-vue/actions/workflows/ci.yml/badge.svg)](https://github.com/leadoux/rick-and-morty-explorer-vue/actions/workflows/ci.yml)
 [![Live](https://img.shields.io/website?url=https%3A%2F%2Frm-vue.leadoux.dev&label=live%20site)](https://rm-vue.leadoux.dev)
 
-A Vue 3 + TypeScript portfolio project that demonstrates:
+A Vue 3 + TypeScript project that demonstrates:
 
 - Vue fundamentals (components, composition API, routing, state management)
 - GraphQL API integration against the [Rick and Morty API](https://rickandmortyapi.com/graphql)
