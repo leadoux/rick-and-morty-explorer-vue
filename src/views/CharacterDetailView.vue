@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
@@ -18,6 +18,15 @@ const { data, fetching, error } = useQuery({
 })
 
 const character = computed(() => data.value?.character)
+
+watch(
+  character,
+  (currentCharacter) => {
+    if (!currentCharacter?.name) return
+    document.title = `${currentCharacter.name} | Rick and Morty Explorer`
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
