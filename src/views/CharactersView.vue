@@ -95,21 +95,33 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p class="description">Browse every character with URL-synced filters and compare-ready cards.</p>
 
     <div class="card filters">
-      <input v-model="name" class="input" placeholder="Name" />
-      <select v-model="status" class="input">
-        <option value="">Any status</option>
-        <option value="alive">Alive</option>
-        <option value="dead">Dead</option>
-        <option value="unknown">Unknown</option>
-      </select>
-      <input v-model="species" class="input" placeholder="Species" />
-      <select v-model="gender" class="input">
-        <option value="">Any gender</option>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
-        <option value="genderless">Genderless</option>
-        <option value="unknown">Unknown</option>
-      </select>
+      <label class="filter-field" for="character-name-filter">
+        <span class="filter-label">Name</span>
+        <input id="character-name-filter" v-model="name" class="input" placeholder="Name" />
+      </label>
+      <label class="filter-field" for="character-status-filter">
+        <span class="filter-label">Status</span>
+        <select id="character-status-filter" v-model="status" class="input">
+          <option value="">Any status</option>
+          <option value="alive">Alive</option>
+          <option value="dead">Dead</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </label>
+      <label class="filter-field" for="character-species-filter">
+        <span class="filter-label">Species</span>
+        <input id="character-species-filter" v-model="species" class="input" placeholder="Species" />
+      </label>
+      <label class="filter-field" for="character-gender-filter">
+        <span class="filter-label">Gender</span>
+        <select id="character-gender-filter" v-model="gender" class="input">
+          <option value="">Any gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="genderless">Genderless</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </label>
       <AppButton variant="secondary" @click="resetFilters">Reset</AppButton>
     </div>
 
@@ -179,6 +191,16 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
   display: grid;
   gap: 0.6rem;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
 
 .description {

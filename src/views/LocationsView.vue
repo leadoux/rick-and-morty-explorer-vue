@@ -89,9 +89,18 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p class="description">Filter by location type and dimension for quick world discovery.</p>
 
     <div class="card filters">
-      <input v-model="name" class="input" placeholder="Location name" />
-      <input v-model="type" class="input" placeholder="Type" />
-      <input v-model="dimension" class="input" placeholder="Dimension" />
+      <label class="filter-field" for="location-name-filter">
+        <span class="filter-label">Location name</span>
+        <input id="location-name-filter" v-model="name" class="input" placeholder="Location name" />
+      </label>
+      <label class="filter-field" for="location-type-filter">
+        <span class="filter-label">Type</span>
+        <input id="location-type-filter" v-model="type" class="input" placeholder="Type" />
+      </label>
+      <label class="filter-field" for="location-dimension-filter">
+        <span class="filter-label">Dimension</span>
+        <input id="location-dimension-filter" v-model="dimension" class="input" placeholder="Dimension" />
+      </label>
     </div>
 
     <p v-if="fetching" class="hint">Loading locations...</p>
@@ -136,6 +145,16 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
   display: grid;
   gap: 0.6rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
 
 .description,

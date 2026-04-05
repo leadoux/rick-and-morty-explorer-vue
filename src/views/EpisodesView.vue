@@ -85,11 +85,17 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p class="description">Browse episodes by name or season, then jump into details or comparison.</p>
 
     <div class="card filters">
-      <input v-model="name" class="input" placeholder="Episode name" />
-      <select v-model="season" class="input">
-        <option value="">All seasons</option>
-        <option v-for="option in 7" :key="option" :value="String(option)">Season {{ option }}</option>
-      </select>
+      <label class="filter-field" for="episode-name-filter">
+        <span class="filter-label">Episode name</span>
+        <input id="episode-name-filter" v-model="name" class="input" placeholder="Episode name" />
+      </label>
+      <label class="filter-field" for="episode-season-filter">
+        <span class="filter-label">Season</span>
+        <select id="episode-season-filter" v-model="season" class="input">
+          <option value="">All seasons</option>
+          <option v-for="option in 7" :key="option" :value="String(option)">Season {{ option }}</option>
+        </select>
+      </label>
     </div>
 
     <p v-if="fetching" class="hint">Loading episodes...</p>
@@ -146,6 +152,16 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
   display: grid;
   gap: 0.6rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
 
 .description,
