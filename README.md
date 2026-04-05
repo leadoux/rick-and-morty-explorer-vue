@@ -8,7 +8,7 @@ A Vue 3 + TypeScript project that demonstrates:
 - Vue fundamentals (components, composition API, routing, state management)
 - GraphQL API integration against the [Rick and Morty API](https://rickandmortyapi.com/graphql)
 - UX polish (responsive layouts, loading/error/empty states, dark mode)
-- Basic testing quality with Cypress smoke scenarios
+- Basic testing quality with Cypress smoke scenarios.
 
 Live app: [https://rm-vue.leadoux.dev](https://rm-vue.leadoux.dev)
 
