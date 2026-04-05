@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
@@ -18,6 +18,15 @@ const { data, fetching, error } = useQuery({
 })
 
 const episode = computed(() => data.value?.episode)
+
+watch(
+  episode,
+  (currentEpisode) => {
+    if (!currentEpisode?.name) return
+    document.title = `${currentEpisode.episode} - ${currentEpisode.name} | Rick and Morty Explorer`
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
