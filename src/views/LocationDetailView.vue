@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { handleImageError } from '@/lib/image'
@@ -16,6 +16,15 @@ const { data, fetching, error } = useQuery({
 })
 
 const location = computed(() => data.value?.location)
+
+watch(
+  location,
+  (currentLocation) => {
+    if (!currentLocation?.name) return
+    document.title = `${currentLocation.name} | Rick and Morty Explorer`
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
