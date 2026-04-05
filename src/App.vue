@@ -1,5 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useHead } from '@vueuse/head'
+import { useRoute } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
+
+const route = useRoute()
+
+useHead(
+  computed(() => ({
+    title: (route.meta.title as string) ?? 'Rick and Morty Explorer',
+  })),
+)
 </script>
 
 <template>

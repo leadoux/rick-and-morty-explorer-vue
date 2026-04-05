@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
+import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
 import { CHARACTER_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -19,13 +20,12 @@ const { data, fetching, error } = useQuery({
 
 const character = computed(() => data.value?.character)
 
-watch(
-  character,
-  (currentCharacter) => {
-    if (!currentCharacter?.name) return
-    document.title = `${currentCharacter.name} | Rick and Morty Explorer`
-  },
-  { immediate: true },
+useHead(
+  computed(() => ({
+    title: character.value?.name
+      ? `${character.value.name} | Rick and Morty Explorer`
+      : 'Character Details | Rick and Morty Explorer',
+  })),
 )
 </script>
 

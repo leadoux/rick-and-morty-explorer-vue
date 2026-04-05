@@ -97,8 +97,4 @@ const router = createRouter({
   ],
 })
 
-router.afterEach((to) => {
-  document.title = (to.meta.title as string) ?? 'Rick and Morty Explorer'
-})
-
 export default router
