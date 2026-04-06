@@ -52,7 +52,13 @@ const hasShortTextFilter = computed(() => {
   )
 })
 
-const { items: locations, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+const {
+  items: locations,
+  totalPages,
+  totalCount,
+  fetching,
+  error,
+} = usePaginatedQuery<
   LocationsQueryData,
   {
     page: number
@@ -77,7 +83,7 @@ const { items: locations, totalPages, totalCount, fetching, error } = usePaginat
   select: (data) => ({
     results: data?.locations?.results ?? [],
     pages: data?.locations?.info?.pages ?? 1,
-    count: data?.locations?.info?.count ?? (data?.locations?.results?.length ?? 0),
+    count: data?.locations?.info?.count ?? data?.locations?.results?.length ?? 0,
   }),
 })
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
@@ -99,7 +105,12 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       </label>
       <label class="filter-field" for="location-dimension-filter">
         <span class="filter-label">Dimension</span>
-        <input id="location-dimension-filter" v-model="dimension" class="input" placeholder="Dimension" />
+        <input
+          id="location-dimension-filter"
+          v-model="dimension"
+          class="input"
+          placeholder="Dimension"
+        />
       </label>
     </div>
 
@@ -127,7 +138,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 subtitle: `${location.type || 'Unknown'} - ${location.dimension || 'Unknown'}`,
               })
             "
-          >{{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+            >{{
+              favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite'
+            }}</AppButton
+          >
         </div>
       </article>
     </div>
@@ -141,22 +155,6 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </template>
 
 <style scoped>
-.filters {
-  display: grid;
-  gap: 0.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.filter-field {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.filter-label {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
 .description,
 .meta {
   color: var(--text-secondary);

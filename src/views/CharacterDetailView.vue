@@ -62,7 +62,10 @@ useHead(
                 image: character.image,
               })
             "
-          >{{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+            >{{
+              favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite'
+            }}</AppButton
+          >
           <AppButton
             variant="secondary"
             @click="
@@ -74,7 +77,8 @@ useHead(
                 species: character.species,
               })
             "
-          >Compare</AppButton>
+            >Compare</AppButton
+          >
         </div>
 
         <h2>Episode Appearances</h2>

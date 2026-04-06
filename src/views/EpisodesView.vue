@@ -50,7 +50,13 @@ const hasShortTextFilter = computed(() => {
   return normalizedName.length > 0 && normalizedName.length < 2
 })
 
-const { items: episodes, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+const {
+  items: episodes,
+  totalPages,
+  totalCount,
+  fetching,
+  error,
+} = usePaginatedQuery<
   EpisodesQueryData,
   {
     page: number
@@ -73,7 +79,7 @@ const { items: episodes, totalPages, totalCount, fetching, error } = usePaginate
   select: (data) => ({
     results: data?.episodes?.results ?? [],
     pages: data?.episodes?.info?.pages ?? 1,
-    count: data?.episodes?.info?.count ?? (data?.episodes?.results?.length ?? 0),
+    count: data?.episodes?.info?.count ?? data?.episodes?.results?.length ?? 0,
   }),
 })
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
@@ -82,7 +88,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 <template>
   <section>
     <h1>Episodes Explorer</h1>
-    <p class="description">Browse episodes by name or season, then jump into details or comparison.</p>
+    <p class="description">
+      Browse episodes by name or season, then jump into details or comparison.
+    </p>
 
     <div class="card filters">
       <label class="filter-field" for="episode-name-filter">
@@ -93,7 +101,9 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
         <span class="filter-label">Season</span>
         <select id="episode-season-filter" v-model="season" class="input">
           <option value="">All seasons</option>
-          <option v-for="option in 7" :key="option" :value="String(option)">Season {{ option }}</option>
+          <option v-for="option in 7" :key="option" :value="String(option)">
+            Season {{ option }}
+          </option>
         </select>
       </label>
     </div>
@@ -134,7 +144,8 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 air_date: episode.air_date,
               })
             "
-          >Compare</AppButton>
+            >Compare</AppButton
+          >
         </div>
       </article>
     </div>
@@ -148,22 +159,6 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </template>
 
 <style scoped>
-.filters {
-  display: grid;
-  gap: 0.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.filter-field {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.filter-label {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
 .description,
 .meta {
   color: var(--text-secondary);
