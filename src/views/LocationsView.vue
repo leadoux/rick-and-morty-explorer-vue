@@ -114,10 +114,18 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       </label>
     </div>
 
-    <p v-if="fetching" class="hint">Loading locations...</p>
-    <p v-else-if="hasShortTextFilter" class="hint">Type at least 2 letters for text filters.</p>
-    <p v-else-if="error && !hasNoResultsError" class="error">Unable to load locations.</p>
-    <p v-else-if="!locations.length" class="hint">No locations match these filters.</p>
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading locations...
+    </p>
+    <p v-else-if="hasShortTextFilter" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Type at least 2 letters for text filters.
+    </p>
+    <p v-else-if="error && !hasNoResultsError" class="error" role="status" aria-live="polite" aria-atomic="true">
+      Unable to load locations.
+    </p>
+    <p v-else-if="!locations.length" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      No locations match these filters.
+    </p>
 
     <div v-else class="grid">
       <h2 class="section-heading">Location results ({{ totalCount }})</h2>

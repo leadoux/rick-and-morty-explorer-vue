@@ -31,8 +31,12 @@ useHead(
 
 <template>
   <section>
-    <p v-if="fetching" class="hint">Loading episode...</p>
-    <p v-else-if="error" class="error">Unable to load this episode.</p>
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading episode...
+    </p>
+    <p v-else-if="error" class="error" role="status" aria-live="polite" aria-atomic="true">
+      Unable to load this episode.
+    </p>
 
     <article v-else-if="episode" class="card">
       <h1>{{ episode.episode }} - {{ episode.name }}</h1>

@@ -31,8 +31,12 @@ useHead(
 
 <template>
   <section>
-    <p v-if="fetching" class="hint">Loading character...</p>
-    <p v-else-if="error" class="error">Unable to load this character.</p>
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading character...
+    </p>
+    <p v-else-if="error" class="error" role="status" aria-live="polite" aria-atomic="true">
+      Unable to load this character.
+    </p>
 
     <article v-else-if="character" class="card detail">
       <img

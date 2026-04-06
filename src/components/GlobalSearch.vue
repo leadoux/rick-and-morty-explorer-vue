@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useQuery } from '@urql/vue'
+import { useRouter } from 'vue-router'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
 import { GLOBAL_SEARCH_QUERY } from '@/lib/queries'
 import { isNoResultsError } from '@/lib/errors'
@@ -8,6 +9,32 @@ import { isNoResultsError } from '@/lib/errors'
 const searchValue = ref('')
 const debouncedSearchValue = useDebouncedValue(searchValue, 350)
 const shouldRun = computed(() => debouncedSearchValue.value.trim().length >= 2)
+const isOpen = ref(false)
+const searchWrapRef = ref<HTMLElement | null>(null)
+const router = useRouter()
+
+type SearchOption = {
+  id: string
+  label: string
+  path: string
+  group: 'Characters' | 'Episodes' | 'Locations'
+}
+
+type CharacterSearchResult = {
+  id: string
+  name: string
+}
+
+type EpisodeSearchResult = {
+  id: string
+  name: string
+  episode: string
+}
+
+type LocationSearchResult = {
+  id: string
+  name: string
+}
 
 const { data, fetching, error } = useQuery({
   query: GLOBAL_SEARCH_QUERY,
@@ -17,67 +44,234 @@ const { data, fetching, error } = useQuery({
   pause: computed(() => !shouldRun.value),
 })
 
-const characters = computed(() => (data.value?.characters?.results ?? []).slice(0, 5))
-const episodes = computed(() => (data.value?.episodes?.results ?? []).slice(0, 5))
-const locations = computed(() => (data.value?.locations?.results ?? []).slice(0, 5))
+const characters = computed<CharacterSearchResult[]>(() => (data.value?.characters?.results ?? []).slice(0, 5))
+const episodes = computed<EpisodeSearchResult[]>(() => (data.value?.episodes?.results ?? []).slice(0, 5))
+const locations = computed<LocationSearchResult[]>(() => (data.value?.locations?.results ?? []).slice(0, 5))
 
 const hasResults = computed(() => {
   return characters.value.length > 0 || episodes.value.length > 0 || locations.value.length > 0
+})
+
+const flattenedOptions = computed<SearchOption[]>(() => {
+  const characterOptions = characters.value.map((character) => ({
+    id: `character-${character.id}`,
+    label: character.name,
+    path: `/character/${character.id}`,
+    group: 'Characters' as const,
+  }))
+  const episodeOptions = episodes.value.map((episode) => ({
+    id: `episode-${episode.id}`,
+    label: `${episode.episode} - ${episode.name}`,
+    path: `/episode/${episode.id}`,
+    group: 'Episodes' as const,
+  }))
+  const locationOptions = locations.value.map((location) => ({
+    id: `location-${location.id}`,
+    label: location.name,
+    path: `/location/${location.id}`,
+    group: 'Locations' as const,
+  }))
+
+  return [...characterOptions, ...episodeOptions, ...locationOptions]
+})
+
+const activeOptionIndex = ref(-1)
+const listboxId = 'global-search-listbox'
+
+const activeOptionId = computed(() => {
+  if (activeOptionIndex.value < 0) return undefined
+  const option = flattenedOptions.value[activeOptionIndex.value]
+  return option ? `search-option-${option.id}` : undefined
+})
+
+/** Panel is “expanded” whenever the user has the dropdown open with a non-empty query. */
+const isPanelVisible = computed(() => isOpen.value && searchValue.value.trim().length > 0)
+
+const clearActiveOption = () => {
+  activeOptionIndex.value = -1
+}
+
+const closeDropdown = () => {
+  isOpen.value = false
+  clearActiveOption()
+}
+
+const onFocusIn = () => {
+  if (shouldRun.value || searchValue.value.trim().length > 0) {
+    isOpen.value = true
+  }
+}
+
+const onFocusOut = (event: FocusEvent) => {
+  const nextFocusedElement = event.relatedTarget as Node | null
+  if (searchWrapRef.value?.contains(nextFocusedElement)) return
+  closeDropdown()
+}
+
+const onKeydown = async (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    if (isOpen.value) {
+      closeDropdown()
+      return
+    }
+    if (searchValue.value.trim().length > 0) {
+      searchValue.value = ''
+    }
+    return
+  }
+
+  if (!shouldRun.value || !flattenedOptions.value.length) return
+
+  if (!isOpen.value && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+    isOpen.value = true
+  }
+
+  if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    activeOptionIndex.value = (activeOptionIndex.value + 1) % flattenedOptions.value.length
+    return
+  }
+
+  if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    activeOptionIndex.value =
+      activeOptionIndex.value <= 0 ? flattenedOptions.value.length - 1 : activeOptionIndex.value - 1
+    return
+  }
+
+  if (event.key === 'Enter' && activeOptionIndex.value >= 0) {
+    event.preventDefault()
+    const option = flattenedOptions.value[activeOptionIndex.value]
+    if (!option) return
+    await router.push(option.path)
+    closeDropdown()
+    return
+  }
+}
+
+watch(searchValue, () => {
+  clearActiveOption()
+  const trimmed = searchValue.value.trim()
+  if (trimmed.length === 0) {
+    isOpen.value = false
+  } else {
+    isOpen.value = true
+  }
+})
+
+watch(shouldRun, (nextShouldRun) => {
+  if (!nextShouldRun) {
+    if (searchValue.value.trim().length === 0) {
+      closeDropdown()
+    }
+    return
+  }
+  if (searchValue.value.trim().length >= 2) {
+    isOpen.value = true
+  }
 })
 
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
 
 <template>
-  <div class="search-wrap">
+  <div ref="searchWrapRef" class="search-wrap" @focusin="onFocusIn" @focusout="onFocusOut">
     <input
       v-model="searchValue"
       class="input"
       type="search"
       placeholder="Search everything..."
       aria-label="Search characters, episodes and locations"
+      role="combobox"
+      aria-autocomplete="list"
+      :aria-expanded="isPanelVisible ? 'true' : 'false'"
+      :aria-controls="isPanelVisible ? listboxId : undefined"
+      :aria-activedescendant="activeOptionId"
+      @keydown="onKeydown"
     />
-    <div v-if="shouldRun" class="results card">
-      <p v-if="fetching" class="hint">Searching...</p>
-      <p v-else-if="error && !hasNoResultsError" class="error">Unable to run search right now.</p>
-      <template v-else-if="hasResults">
-        <div v-if="characters.length">
-          <p class="section-label">Characters</p>
-          <RouterLink
-            v-for="character in characters"
-            :key="character.id"
-            class="result-link"
-            :to="`/character/${character.id}`"
-          >
-            {{ character.name }}
-          </RouterLink>
-        </div>
-        <div v-if="episodes.length">
-          <p class="section-label">Episodes</p>
-          <RouterLink
-            v-for="episode in episodes"
-            :key="episode.id"
-            class="result-link"
-            :to="`/episode/${episode.id}`"
-          >
-            {{ episode.episode }} - {{ episode.name }}
-          </RouterLink>
-        </div>
-        <div v-if="locations.length">
-          <p class="section-label">Locations</p>
-          <RouterLink
-            v-for="location in locations"
-            :key="location.id"
-            class="result-link"
-            :to="`/location/${location.id}`"
-          >
-            {{ location.name }}
-          </RouterLink>
-        </div>
+    <div
+      v-if="isPanelVisible"
+      :id="listboxId"
+      class="results card"
+      :role="shouldRun ? 'listbox' : undefined"
+    >
+      <template v-if="!shouldRun">
+        <p class="hint debounce-hint" role="status" aria-live="polite" aria-atomic="true">
+          Type at least 2 letters to search.
+        </p>
       </template>
-      <p v-else class="hint">No results for this query.</p>
+      <template v-else>
+        <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+          Searching...
+        </p>
+        <p
+          v-else-if="error && !hasNoResultsError"
+          class="error"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          Unable to run search right now.
+        </p>
+        <template v-else-if="hasResults">
+          <div v-if="characters.length">
+            <p class="section-label">Characters</p>
+            <RouterLink
+              v-for="character in characters"
+              :key="character.id"
+              class="result-link"
+              :to="`/character/${character.id}`"
+              role="option"
+              :id="`search-option-character-${character.id}`"
+              :aria-selected="activeOptionId === `search-option-character-${character.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-character-${character.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `character-${character.id}`)"
+              @click="closeDropdown"
+            >
+              {{ character.name }}
+            </RouterLink>
+          </div>
+          <div v-if="episodes.length">
+            <p class="section-label">Episodes</p>
+            <RouterLink
+              v-for="episode in episodes"
+              :key="episode.id"
+              class="result-link"
+              :to="`/episode/${episode.id}`"
+              role="option"
+              :id="`search-option-episode-${episode.id}`"
+              :aria-selected="activeOptionId === `search-option-episode-${episode.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-episode-${episode.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `episode-${episode.id}`)"
+              @click="closeDropdown"
+            >
+              {{ episode.episode }} - {{ episode.name }}
+            </RouterLink>
+          </div>
+          <div v-if="locations.length">
+            <p class="section-label">Locations</p>
+            <RouterLink
+              v-for="location in locations"
+              :key="location.id"
+              class="result-link"
+              :to="`/location/${location.id}`"
+              role="option"
+              :id="`search-option-location-${location.id}`"
+              :aria-selected="activeOptionId === `search-option-location-${location.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-location-${location.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `location-${location.id}`)"
+              @click="closeDropdown"
+            >
+              {{ location.name }}
+            </RouterLink>
+          </div>
+        </template>
+        <p v-else class="hint" role="status" aria-live="polite" aria-atomic="true">
+          No results for this query.
+        </p>
+      </template>
     </div>
-    <p v-else-if="searchValue.trim().length > 0" class="hint debounce-hint">Type at least 2 letters to search.</p>
   </div>
 </template>
 
@@ -112,6 +306,11 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 .result-link:hover,
 .result-link:focus {
   color: var(--accent);
+}
+
+.result-link.active {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .debounce-hint {

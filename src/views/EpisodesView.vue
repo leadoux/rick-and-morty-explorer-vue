@@ -108,10 +108,18 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       </label>
     </div>
 
-    <p v-if="fetching" class="hint">Loading episodes...</p>
-    <p v-else-if="hasShortTextFilter" class="hint">Type at least 2 letters for episode name.</p>
-    <p v-else-if="error && !hasNoResultsError" class="error">Unable to load episode data.</p>
-    <p v-else-if="!episodes.length" class="hint">No episodes match these filters.</p>
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading episodes...
+    </p>
+    <p v-else-if="hasShortTextFilter" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Type at least 2 letters for episode name.
+    </p>
+    <p v-else-if="error && !hasNoResultsError" class="error" role="status" aria-live="polite" aria-atomic="true">
+      Unable to load episode data.
+    </p>
+    <p v-else-if="!episodes.length" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      No episodes match these filters.
+    </p>
 
     <div v-else class="grid">
       <h2 class="section-heading">Episode results ({{ totalCount }})</h2>
