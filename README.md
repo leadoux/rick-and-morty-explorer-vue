@@ -10,6 +10,8 @@ A Vue 3 + TypeScript project that demonstrates:
 - UX polish (responsive layouts, loading/error/empty states, dark mode)
 - Basic testing quality with Cypress smoke scenarios.
 
+> Project status: this repository is approximately **70% complete**.
+
 Live app: [https://rm-vue.leadoux.dev](https://rm-vue.leadoux.dev)
 
 ## Feature Map

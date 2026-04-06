@@ -64,7 +64,13 @@ const hasShortTextFilter = computed(() => {
   )
 })
 
-const { items: characters, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+const {
+  items: characters,
+  totalPages,
+  totalCount,
+  fetching,
+  error,
+} = usePaginatedQuery<
   CharactersQueryData,
   {
     page: number
@@ -83,7 +89,7 @@ const { items: characters, totalPages, totalCount, fetching, error } = usePagina
   select: (data) => ({
     results: data?.characters?.results ?? [],
     pages: data?.characters?.info?.pages ?? 1,
-    count: data?.characters?.info?.count ?? (data?.characters?.results?.length ?? 0),
+    count: data?.characters?.info?.count ?? data?.characters?.results?.length ?? 0,
   }),
 })
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
@@ -92,36 +98,63 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 <template>
   <section>
     <h1>Characters Explorer</h1>
-    <p class="description">Browse every character with URL-synced filters and compare-ready cards.</p>
+    <p class="description">
+      Browse every character with URL-synced filters and compare-ready cards.
+    </p>
 
     <div class="card filters">
-      <input v-model="name" class="input" placeholder="Name" />
-      <select v-model="status" class="input">
-        <option value="">Any status</option>
-        <option value="alive">Alive</option>
-        <option value="dead">Dead</option>
-        <option value="unknown">Unknown</option>
-      </select>
-      <input v-model="species" class="input" placeholder="Species" />
-      <select v-model="gender" class="input">
-        <option value="">Any gender</option>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
-        <option value="genderless">Genderless</option>
-        <option value="unknown">Unknown</option>
-      </select>
+      <label class="filter-field" for="character-name-filter">
+        <span class="filter-label">Name</span>
+        <input id="character-name-filter" v-model="name" class="input" placeholder="Name" />
+      </label>
+      <label class="filter-field" for="character-status-filter">
+        <span class="filter-label">Status</span>
+        <select id="character-status-filter" v-model="status" class="input">
+          <option value="">Any status</option>
+          <option value="alive">Alive</option>
+          <option value="dead">Dead</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </label>
+      <label class="filter-field" for="character-species-filter">
+        <span class="filter-label">Species</span>
+        <input
+          id="character-species-filter"
+          v-model="species"
+          class="input"
+          placeholder="Species"
+        />
+      </label>
+      <label class="filter-field" for="character-gender-filter">
+        <span class="filter-label">Gender</span>
+        <select id="character-gender-filter" v-model="gender" class="input">
+          <option value="">Any gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="genderless">Genderless</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </label>
       <AppButton variant="secondary" @click="resetFilters">Reset</AppButton>
     </div>
 
     <p v-if="fetching" class="hint">Loading characters...</p>
-    <p v-else-if="hasShortTextFilter" class="hint">Type at least 2 letters for name/species filters.</p>
-    <p v-else-if="error && !hasNoResultsError" class="error">Unable to load character data right now.</p>
+    <p v-else-if="hasShortTextFilter" class="hint">
+      Type at least 2 letters for name/species filters.
+    </p>
+    <p v-else-if="error && !hasNoResultsError" class="error">
+      Unable to load character data right now.
+    </p>
     <p v-else-if="!characters.length" class="hint">No characters match these filters.</p>
 
     <div v-else class="grid">
       <h2 class="section-heading">Character results ({{ totalCount }})</h2>
       <article v-for="character in characters" :key="character.id" class="card">
-        <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
+        <RouterLink
+          class="image-link"
+          :to="`/character/${character.id}`"
+          :aria-label="`Open ${character.name}`"
+        >
           <img
             :src="character.image"
             :alt="character.name"
@@ -161,7 +194,8 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 species: character.species,
               })
             "
-          >Compare</AppButton>
+            >Compare</AppButton
+          >
         </div>
       </article>
     </div>
@@ -175,12 +209,6 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </template>
 
 <style scoped>
-.filters {
-  display: grid;
-  gap: 0.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-}
-
 .description {
   color: var(--text-secondary);
 }

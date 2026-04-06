@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
+import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
 import { LOCATION_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -16,6 +17,14 @@ const { data, fetching, error } = useQuery({
 })
 
 const location = computed(() => data.value?.location)
+
+useHead(
+  computed(() => ({
+    title: location.value?.name
+      ? `${location.value.name} | Rick and Morty Explorer`
+      : 'Location Details | Rick and Morty Explorer',
+  })),
+)
 </script>
 
 <template>

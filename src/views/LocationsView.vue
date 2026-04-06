@@ -52,7 +52,13 @@ const hasShortTextFilter = computed(() => {
   )
 })
 
-const { items: locations, totalPages, totalCount, fetching, error } = usePaginatedQuery<
+const {
+  items: locations,
+  totalPages,
+  totalCount,
+  fetching,
+  error,
+} = usePaginatedQuery<
   LocationsQueryData,
   {
     page: number
@@ -77,7 +83,7 @@ const { items: locations, totalPages, totalCount, fetching, error } = usePaginat
   select: (data) => ({
     results: data?.locations?.results ?? [],
     pages: data?.locations?.info?.pages ?? 1,
-    count: data?.locations?.info?.count ?? (data?.locations?.results?.length ?? 0),
+    count: data?.locations?.info?.count ?? data?.locations?.results?.length ?? 0,
   }),
 })
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
@@ -89,9 +95,23 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <p class="description">Filter by location type and dimension for quick world discovery.</p>
 
     <div class="card filters">
-      <input v-model="name" class="input" placeholder="Location name" />
-      <input v-model="type" class="input" placeholder="Type" />
-      <input v-model="dimension" class="input" placeholder="Dimension" />
+      <label class="filter-field" for="location-name-filter">
+        <span class="filter-label">Location name</span>
+        <input id="location-name-filter" v-model="name" class="input" placeholder="Location name" />
+      </label>
+      <label class="filter-field" for="location-type-filter">
+        <span class="filter-label">Type</span>
+        <input id="location-type-filter" v-model="type" class="input" placeholder="Type" />
+      </label>
+      <label class="filter-field" for="location-dimension-filter">
+        <span class="filter-label">Dimension</span>
+        <input
+          id="location-dimension-filter"
+          v-model="dimension"
+          class="input"
+          placeholder="Dimension"
+        />
+      </label>
     </div>
 
     <p v-if="fetching" class="hint">Loading locations...</p>
@@ -118,7 +138,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
                 subtitle: `${location.type || 'Unknown'} - ${location.dimension || 'Unknown'}`,
               })
             "
-          >{{ favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+            >{{
+              favoritesStore.isFavorite(location.id, 'location') ? 'Unfavorite' : 'Favorite'
+            }}</AppButton
+          >
         </div>
       </article>
     </div>
@@ -132,12 +155,6 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </template>
 
 <style scoped>
-.filters {
-  display: grid;
-  gap: 0.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
 .description,
 .meta {
   color: var(--text-secondary);

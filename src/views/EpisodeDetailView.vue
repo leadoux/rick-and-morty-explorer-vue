@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
+import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
 import { EPISODE_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -18,6 +19,14 @@ const { data, fetching, error } = useQuery({
 })
 
 const episode = computed(() => data.value?.episode)
+
+useHead(
+  computed(() => ({
+    title: episode.value?.name
+      ? `${episode.value.episode} - ${episode.value.name} | Rick and Morty Explorer`
+      : 'Episode Details | Rick and Morty Explorer',
+  })),
+)
 </script>
 
 <template>

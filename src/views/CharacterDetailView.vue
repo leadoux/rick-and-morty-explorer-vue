@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
+import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
 import { CHARACTER_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -18,6 +19,14 @@ const { data, fetching, error } = useQuery({
 })
 
 const character = computed(() => data.value?.character)
+
+useHead(
+  computed(() => ({
+    title: character.value?.name
+      ? `${character.value.name} | Rick and Morty Explorer`
+      : 'Character Details | Rick and Morty Explorer',
+  })),
+)
 </script>
 
 <template>
@@ -53,7 +62,10 @@ const character = computed(() => data.value?.character)
                 image: character.image,
               })
             "
-          >{{ favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite' }}</AppButton>
+            >{{
+              favoritesStore.isFavorite(character.id, 'character') ? 'Unfavorite' : 'Favorite'
+            }}</AppButton
+          >
           <AppButton
             variant="secondary"
             @click="
@@ -65,7 +77,8 @@ const character = computed(() => data.value?.character)
                 species: character.species,
               })
             "
-          >Compare</AppButton>
+            >Compare</AppButton
+          >
         </div>
 
         <h2>Episode Appearances</h2>
