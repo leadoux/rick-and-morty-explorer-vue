@@ -138,14 +138,24 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       <AppButton variant="secondary" @click="resetFilters">Reset</AppButton>
     </div>
 
-    <p v-if="fetching" class="hint">Loading characters...</p>
-    <p v-else-if="hasShortTextFilter" class="hint">
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading characters...
+    </p>
+    <p v-else-if="hasShortTextFilter" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Type at least 2 letters for name/species filters.
     </p>
-    <p v-else-if="error && !hasNoResultsError" class="error">
+    <p
+      v-else-if="error && !hasNoResultsError"
+      class="error"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       Unable to load character data right now.
     </p>
-    <p v-else-if="!characters.length" class="hint">No characters match these filters.</p>
+    <p v-else-if="!characters.length" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      No characters match these filters.
+    </p>
 
     <div v-else class="grid">
       <h2 class="section-heading">Character results ({{ totalCount }})</h2>

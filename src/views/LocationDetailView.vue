@@ -29,8 +29,12 @@ useHead(
 
 <template>
   <section>
-    <p v-if="fetching" class="hint">Loading location...</p>
-    <p v-else-if="error" class="error">Unable to load this location.</p>
+    <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+      Loading location...
+    </p>
+    <p v-else-if="error" class="error" role="status" aria-live="polite" aria-atomic="true">
+      Unable to load this location.
+    </p>
 
     <article v-else-if="location" class="card">
       <h1>{{ location.name }}</h1>

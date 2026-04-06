@@ -38,8 +38,18 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       aria-label="Search characters, episodes and locations"
     />
     <div v-if="shouldRun" class="results card">
-      <p v-if="fetching" class="hint">Searching...</p>
-      <p v-else-if="error && !hasNoResultsError" class="error">Unable to run search right now.</p>
+      <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+        Searching...
+      </p>
+      <p
+        v-else-if="error && !hasNoResultsError"
+        class="error"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        Unable to run search right now.
+      </p>
       <template v-else-if="hasResults">
         <div v-if="characters.length">
           <p class="section-label">Characters</p>
@@ -75,9 +85,19 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
           </RouterLink>
         </div>
       </template>
-      <p v-else class="hint">No results for this query.</p>
+      <p v-else class="hint" role="status" aria-live="polite" aria-atomic="true">
+        No results for this query.
+      </p>
     </div>
-    <p v-else-if="searchValue.trim().length > 0" class="hint debounce-hint">Type at least 2 letters to search.</p>
+    <p
+      v-else-if="searchValue.trim().length > 0"
+      class="hint debounce-hint"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      Type at least 2 letters to search.
+    </p>
   </div>
 </template>
 
