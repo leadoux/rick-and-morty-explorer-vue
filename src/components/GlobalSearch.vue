@@ -84,7 +84,8 @@ const activeOptionId = computed(() => {
   return option ? `search-option-${option.id}` : undefined
 })
 
-const isDropdownVisible = computed(() => shouldRun.value && isOpen.value)
+/** Panel is “expanded” whenever the user has the dropdown open with a non-empty query. */
+const isPanelVisible = computed(() => isOpen.value && searchValue.value.trim().length > 0)
 
 const clearActiveOption = () => {
   activeOptionIndex.value = -1
@@ -96,7 +97,9 @@ const closeDropdown = () => {
 }
 
 const onFocusIn = () => {
-  if (shouldRun.value) isOpen.value = true
+  if (shouldRun.value || searchValue.value.trim().length > 0) {
+    isOpen.value = true
+  }
 }
 
 const onFocusOut = (event: FocusEvent) => {
@@ -143,14 +146,19 @@ const onKeydown = async (event: KeyboardEvent) => {
 
 watch(searchValue, () => {
   clearActiveOption()
-  if (searchValue.value.trim().length === 0) {
+  const trimmed = searchValue.value.trim()
+  if (trimmed.length === 0) {
     isOpen.value = false
+  } else {
+    isOpen.value = true
   }
 })
 
 watch(shouldRun, (nextShouldRun) => {
   if (!nextShouldRun) {
-    closeDropdown()
+    if (searchValue.value.trim().length === 0) {
+      closeDropdown()
+    }
     return
   }
   if (searchValue.value.trim().length >= 2) {
@@ -171,90 +179,93 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       aria-label="Search characters, episodes and locations"
       role="combobox"
       aria-autocomplete="list"
-      :aria-expanded="isDropdownVisible ? 'true' : 'false'"
-      :aria-controls="isDropdownVisible ? listboxId : undefined"
+      :aria-expanded="isPanelVisible ? 'true' : 'false'"
+      :aria-controls="isPanelVisible ? listboxId : undefined"
       :aria-activedescendant="activeOptionId"
       @keydown="onKeydown"
     />
-    <div v-if="isDropdownVisible" :id="listboxId" class="results card" role="listbox">
-      <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
-        Searching...
-      </p>
-      <p
-        v-else-if="error && !hasNoResultsError"
-        class="error"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        Unable to run search right now.
-      </p>
-      <template v-else-if="hasResults">
-        <div v-if="characters.length">
-          <p class="section-label">Characters</p>
-          <RouterLink
-            v-for="character in characters"
-            :key="character.id"
-            class="result-link"
-            :to="`/character/${character.id}`"
-            role="option"
-            :id="`search-option-character-${character.id}`"
-            :aria-selected="activeOptionId === `search-option-character-${character.id}` ? 'true' : 'false'"
-            :class="{ active: activeOptionId === `search-option-character-${character.id}` }"
-            @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `character-${character.id}`)"
-            @click="closeDropdown"
-          >
-            {{ character.name }}
-          </RouterLink>
-        </div>
-        <div v-if="episodes.length">
-          <p class="section-label">Episodes</p>
-          <RouterLink
-            v-for="episode in episodes"
-            :key="episode.id"
-            class="result-link"
-            :to="`/episode/${episode.id}`"
-            role="option"
-            :id="`search-option-episode-${episode.id}`"
-            :aria-selected="activeOptionId === `search-option-episode-${episode.id}` ? 'true' : 'false'"
-            :class="{ active: activeOptionId === `search-option-episode-${episode.id}` }"
-            @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `episode-${episode.id}`)"
-            @click="closeDropdown"
-          >
-            {{ episode.episode }} - {{ episode.name }}
-          </RouterLink>
-        </div>
-        <div v-if="locations.length">
-          <p class="section-label">Locations</p>
-          <RouterLink
-            v-for="location in locations"
-            :key="location.id"
-            class="result-link"
-            :to="`/location/${location.id}`"
-            role="option"
-            :id="`search-option-location-${location.id}`"
-            :aria-selected="activeOptionId === `search-option-location-${location.id}` ? 'true' : 'false'"
-            :class="{ active: activeOptionId === `search-option-location-${location.id}` }"
-            @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `location-${location.id}`)"
-            @click="closeDropdown"
-          >
-            {{ location.name }}
-          </RouterLink>
-        </div>
-      </template>
-      <p v-else class="hint" role="status" aria-live="polite" aria-atomic="true">
-        No results for this query.
-      </p>
-    </div>
-    <p
-      v-else-if="searchValue.trim().length > 0"
-      class="hint debounce-hint"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
+    <div
+      v-if="isPanelVisible"
+      :id="listboxId"
+      class="results card"
+      :role="shouldRun ? 'listbox' : undefined"
     >
-      Type at least 2 letters to search.
-    </p>
+      <template v-if="!shouldRun">
+        <p class="hint debounce-hint" role="status" aria-live="polite" aria-atomic="true">
+          Type at least 2 letters to search.
+        </p>
+      </template>
+      <template v-else>
+        <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
+          Searching...
+        </p>
+        <p
+          v-else-if="error && !hasNoResultsError"
+          class="error"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          Unable to run search right now.
+        </p>
+        <template v-else-if="hasResults">
+          <div v-if="characters.length">
+            <p class="section-label">Characters</p>
+            <RouterLink
+              v-for="character in characters"
+              :key="character.id"
+              class="result-link"
+              :to="`/character/${character.id}`"
+              role="option"
+              :id="`search-option-character-${character.id}`"
+              :aria-selected="activeOptionId === `search-option-character-${character.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-character-${character.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `character-${character.id}`)"
+              @click="closeDropdown"
+            >
+              {{ character.name }}
+            </RouterLink>
+          </div>
+          <div v-if="episodes.length">
+            <p class="section-label">Episodes</p>
+            <RouterLink
+              v-for="episode in episodes"
+              :key="episode.id"
+              class="result-link"
+              :to="`/episode/${episode.id}`"
+              role="option"
+              :id="`search-option-episode-${episode.id}`"
+              :aria-selected="activeOptionId === `search-option-episode-${episode.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-episode-${episode.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `episode-${episode.id}`)"
+              @click="closeDropdown"
+            >
+              {{ episode.episode }} - {{ episode.name }}
+            </RouterLink>
+          </div>
+          <div v-if="locations.length">
+            <p class="section-label">Locations</p>
+            <RouterLink
+              v-for="location in locations"
+              :key="location.id"
+              class="result-link"
+              :to="`/location/${location.id}`"
+              role="option"
+              :id="`search-option-location-${location.id}`"
+              :aria-selected="activeOptionId === `search-option-location-${location.id}` ? 'true' : 'false'"
+              :class="{ active: activeOptionId === `search-option-location-${location.id}` }"
+              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `location-${location.id}`)"
+              @click="closeDropdown"
+            >
+              {{ location.name }}
+            </RouterLink>
+          </div>
+        </template>
+        <p v-else class="hint" role="status" aria-live="polite" aria-atomic="true">
+          No results for this query.
+        </p>
+      </template>
+    </div>
   </div>
 </template>
 
