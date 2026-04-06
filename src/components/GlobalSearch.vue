@@ -111,7 +111,13 @@ const onFocusOut = (event: FocusEvent) => {
 const onKeydown = async (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     event.preventDefault()
-    closeDropdown()
+    if (isOpen.value) {
+      closeDropdown()
+      return
+    }
+    if (searchValue.value.trim().length > 0) {
+      searchValue.value = ''
+    }
     return
   }
 
