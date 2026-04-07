@@ -41,6 +41,22 @@ a {
   color: var(--accent);
 }
 
+/* Rick and Morty API character images are 300×300; reserve space to limit CLS */
+.character-portrait-link {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.character-portrait-link img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

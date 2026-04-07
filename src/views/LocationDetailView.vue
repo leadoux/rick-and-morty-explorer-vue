@@ -68,10 +68,16 @@ useHead(
       <h2>Residents</h2>
       <div class="grid">
         <article v-for="resident in location.residents" :key="resident.id" class="card resident">
-          <RouterLink class="image-link" :to="`/character/${resident.id}`" :aria-label="`Open ${resident.name}`">
+          <RouterLink
+            class="image-link character-portrait-link"
+            :to="`/character/${resident.id}`"
+            :aria-label="`Open ${resident.name}`"
+          >
             <img
               :src="resident.image"
               :alt="resident.name"
+              width="300"
+              height="300"
               loading="lazy"
               decoding="async"
               @error="handleImageError"
@@ -97,11 +103,6 @@ useHead(
 
 button {
   margin-top: 0.5rem;
-}
-
-.resident img {
-  width: 100%;
-  border-radius: 0.7rem;
 }
 
 .image-link {
