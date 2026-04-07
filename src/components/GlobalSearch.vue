@@ -129,12 +129,20 @@ const onKeydown = async (event: KeyboardEvent) => {
 
   if (event.key === 'ArrowDown') {
     event.preventDefault()
+    if (activeOptionIndex.value < 0) {
+      activeOptionIndex.value = 0
+      return
+    }
     activeOptionIndex.value = (activeOptionIndex.value + 1) % flattenedOptions.value.length
     return
   }
 
   if (event.key === 'ArrowUp') {
     event.preventDefault()
+    if (activeOptionIndex.value < 0) {
+      activeOptionIndex.value = flattenedOptions.value.length - 1
+      return
+    }
     activeOptionIndex.value =
       activeOptionIndex.value <= 0 ? flattenedOptions.value.length - 1 : activeOptionIndex.value - 1
     return
@@ -171,6 +179,28 @@ watch(shouldRun, (nextShouldRun) => {
     isOpen.value = true
   }
 })
+
+watch(
+  flattenedOptions,
+  (nextOptions) => {
+    if (!nextOptions.length) {
+      clearActiveOption()
+      return
+    }
+
+    if (activeOptionIndex.value >= nextOptions.length) {
+      activeOptionIndex.value = nextOptions.length - 1
+      return
+    }
+
+    // When results appear while the panel is open, initialize an active option
+    // so arrow navigation and SR announcements behave consistently.
+    if (isPanelVisible.value && activeOptionIndex.value < 0) {
+      activeOptionIndex.value = 0
+    }
+  },
+  { immediate: true },
+)
 
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
 </script>
@@ -226,7 +256,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
               :id="`search-option-character-${character.id}`"
               :aria-selected="activeOptionId === `search-option-character-${character.id}` ? 'true' : 'false'"
               :class="{ active: activeOptionId === `search-option-character-${character.id}` }"
-              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `character-${character.id}`)"
+              tabindex="-1"
+              @mouseenter="
+                activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `character-${character.id}`)
+              "
               @click="closeDropdown"
             >
               {{ character.name }}
@@ -243,7 +276,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
               :id="`search-option-episode-${episode.id}`"
               :aria-selected="activeOptionId === `search-option-episode-${episode.id}` ? 'true' : 'false'"
               :class="{ active: activeOptionId === `search-option-episode-${episode.id}` }"
-              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `episode-${episode.id}`)"
+              tabindex="-1"
+              @mouseenter="
+                activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `episode-${episode.id}`)
+              "
               @click="closeDropdown"
             >
               {{ episode.episode }} - {{ episode.name }}
@@ -260,7 +296,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
               :id="`search-option-location-${location.id}`"
               :aria-selected="activeOptionId === `search-option-location-${location.id}` ? 'true' : 'false'"
               :class="{ active: activeOptionId === `search-option-location-${location.id}` }"
-              @focus="activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `location-${location.id}`)"
+              tabindex="-1"
+              @mouseenter="
+                activeOptionIndex = flattenedOptions.findIndex((option) => option.id === `location-${location.id}`)
+              "
               @click="closeDropdown"
             >
               {{ location.name }}

@@ -6,11 +6,14 @@ import AppHeader from '@/components/AppHeader.vue'
 
 const route = useRoute()
 const mainContentRef = ref<HTMLElement | null>(null)
+const routeAnnouncement = ref('')
 let hasNavigated = false
+
+const pageTitle = computed(() => (route.meta.title as string) ?? 'Rick and Morty Explorer')
 
 useHead(
   computed(() => ({
-    title: (route.meta.title as string) ?? 'Rick and Morty Explorer',
+    title: pageTitle.value,
   })),
 )
 
@@ -24,6 +27,8 @@ watch(
     }
 
     await nextTick()
+
+    routeAnnouncement.value = pageTitle.value
 
     const heading = mainContentRef.value?.querySelector('h1')
     if (heading instanceof HTMLElement) {
@@ -40,6 +45,9 @@ watch(
 <template>
   <div class="app-shell">
     <a class="skip-link" href="#main-content">Skip to main content</a>
+    <p class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+      {{ routeAnnouncement }}
+    </p>
     <AppHeader />
     <main id="main-content" ref="mainContentRef" class="main-content" tabindex="-1">
       <RouterView />
