@@ -1,4 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {
+  characterDetailGenericDescription,
+  charactersPageDescription,
+  comparePageDescription,
+  defaultSiteDescription,
+  episodeDetailGenericDescription,
+  episodesPageDescription,
+  favoritesPageDescription,
+  locationDetailGenericDescription,
+  locationsPageDescription,
+  notFoundPageDescription,
+} from '@/lib/seo'
 import CharactersView from '@/views/CharactersView.vue'
 import EpisodesView from '@/views/EpisodesView.vue'
 import LocationsView from '@/views/LocationsView.vue'
@@ -17,6 +29,7 @@ const router = createRouter({
       redirect: '/characters',
       meta: {
         title: 'Rick and Morty Explorer',
+        description: defaultSiteDescription,
       },
     },
     {
@@ -25,6 +38,7 @@ const router = createRouter({
       component: CharactersView,
       meta: {
         title: 'Characters | Rick and Morty Explorer',
+        description: charactersPageDescription,
       },
     },
     {
@@ -33,6 +47,7 @@ const router = createRouter({
       component: EpisodesView,
       meta: {
         title: 'Episodes | Rick and Morty Explorer',
+        description: episodesPageDescription,
       },
     },
     {
@@ -41,6 +56,7 @@ const router = createRouter({
       component: LocationsView,
       meta: {
         title: 'Locations | Rick and Morty Explorer',
+        description: locationsPageDescription,
       },
     },
     {
@@ -50,6 +66,7 @@ const router = createRouter({
       props: true,
       meta: {
         title: 'Character Details | Rick and Morty Explorer',
+        description: characterDetailGenericDescription,
       },
     },
     {
@@ -59,6 +76,7 @@ const router = createRouter({
       props: true,
       meta: {
         title: 'Episode Details | Rick and Morty Explorer',
+        description: episodeDetailGenericDescription,
       },
     },
     {
@@ -68,6 +86,7 @@ const router = createRouter({
       props: true,
       meta: {
         title: 'Location Details | Rick and Morty Explorer',
+        description: locationDetailGenericDescription,
       },
     },
     {
@@ -76,6 +95,7 @@ const router = createRouter({
       component: FavoritesView,
       meta: {
         title: 'Favorites | Rick and Morty Explorer',
+        description: favoritesPageDescription,
       },
     },
     {
@@ -84,6 +104,7 @@ const router = createRouter({
       component: CompareView,
       meta: {
         title: 'Compare | Rick and Morty Explorer',
+        description: comparePageDescription,
       },
     },
     {
@@ -92,6 +113,7 @@ const router = createRouter({
       component: NotFoundView,
       meta: {
         title: 'Page Not Found | Rick and Morty Explorer',
+        description: notFoundPageDescription,
       },
     },
   ],

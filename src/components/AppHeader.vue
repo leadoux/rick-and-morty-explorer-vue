@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useCompareStore } from '@/stores/compare'
@@ -11,6 +12,18 @@ const preferencesStore = usePreferencesStore()
 const compareStore = useCompareStore()
 const { isDarkMode } = storeToRefs(preferencesStore)
 
+const routeName = computed(() => route.name as string | undefined)
+
+const isCharactersNavActive = computed(
+  () => routeName.value === 'characters' || routeName.value === 'character-detail',
+)
+const isEpisodesNavActive = computed(
+  () => routeName.value === 'episodes' || routeName.value === 'episode-detail',
+)
+const isLocationsNavActive = computed(
+  () => routeName.value === 'locations' || routeName.value === 'location-detail',
+)
+
 const isCurrentPath = (path: string) => route.path === path
 </script>
 
@@ -19,9 +32,9 @@ const isCurrentPath = (path: string) => route.path === path
     <div class="header-inner">
       <RouterLink class="brand" to="/characters">Rick and Morty Explorer</RouterLink>
       <nav class="nav-links">
-        <RouterLink :class="{ active: isCurrentPath('/characters') }" to="/characters">Characters</RouterLink>
-        <RouterLink :class="{ active: isCurrentPath('/episodes') }" to="/episodes">Episodes</RouterLink>
-        <RouterLink :class="{ active: isCurrentPath('/locations') }" to="/locations">Locations</RouterLink>
+        <RouterLink :class="{ active: isCharactersNavActive }" to="/characters">Characters</RouterLink>
+        <RouterLink :class="{ active: isEpisodesNavActive }" to="/episodes">Episodes</RouterLink>
+        <RouterLink :class="{ active: isLocationsNavActive }" to="/locations">Locations</RouterLink>
         <RouterLink :class="{ active: isCurrentPath('/favorites') }" to="/favorites">Favorites</RouterLink>
         <RouterLink :class="{ active: isCurrentPath('/compare') }" to="/compare">
           Compare
@@ -30,7 +43,14 @@ const isCurrentPath = (path: string) => route.path === path
       </nav>
       <div class="actions">
         <GlobalSearch />
-        <AppButton variant="secondary" @click="preferencesStore.toggleTheme">
+        <AppButton
+          class="theme-toggle"
+          variant="secondary"
+          type="button"
+          :aria-pressed="isDarkMode ? 'true' : 'false'"
+          :aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+          @click="preferencesStore.toggleTheme"
+        >
           {{ isDarkMode ? 'Light' : 'Dark' }} mode
         </AppButton>
       </div>
@@ -87,6 +107,10 @@ const isCurrentPath = (path: string) => route.path === path
   gap: 0.75rem;
   align-items: center;
   justify-content: space-between;
+}
+
+.actions :deep(.theme-toggle) {
+  white-space: nowrap;
 }
 
 .badge {

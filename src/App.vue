@@ -3,6 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { useHead } from '@vueuse/head'
 import { useRoute } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
+import { defaultSiteDescription } from '@/lib/seo'
 
 const route = useRoute()
 const mainContentRef = ref<HTMLElement | null>(null)
@@ -10,10 +11,12 @@ const routeAnnouncement = ref('')
 let hasNavigated = false
 
 const pageTitle = computed(() => (route.meta.title as string) ?? 'Rick and Morty Explorer')
+const pageDescription = computed(() => route.meta.description ?? defaultSiteDescription)
 
 useHead(
   computed(() => ({
     title: pageTitle.value,
+    meta: [{ name: 'description', content: pageDescription.value, key: 'description' }],
   })),
 )
 

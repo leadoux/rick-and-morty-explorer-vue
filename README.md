@@ -52,6 +52,15 @@ pnpm dev
 The dev server proxies GraphQL requests through `/graphql` to avoid browser CORS issues during local development.
 For deployed environments, you can optionally set `VITE_GRAPHQL_URL` to route through your own backend/proxy endpoint.
 
+### Content Security Policy (Netlify)
+
+The site sends a **`Content-Security-Policy`** via [`public/_headers`](public/_headers) (copied into `dist/` on build). Netlify applies it from the publish root.
+
+- **GraphQL origin:** `connect-src` allows `https://rickandmortyapi.com` (see [`src/main.ts`](src/main.ts)). If you set **`VITE_GRAPHQL_URL`** in Netlify to a different origin (your own proxy), **add that origin’s scheme and host** to `connect-src` in `public/_headers` or API calls will be blocked by the browser.
+- **Optional rollout:** you can temporarily deploy the same policy as **`Content-Security-Policy-Report-Only`** (and a reporting endpoint) to log violations before enforcing; keep a single source of truth so you do not ship duplicate conflicting CSP headers.
+
+**After deploy, verify manually:** open DevTools → Network → document response → confirm `Content-Security-Policy`. Exercise list pages, detail pages, global search, pagination, images, and theme toggle. Repeat on a deploy preview if you use PR previews.
+
 ## Quality Checks
 
 ```sh
@@ -71,7 +80,7 @@ pnpm test:e2e
 
 ## Deployment
 
-This project is configured for Netlify via `netlify.toml`.
+This project is configured for Netlify via `netlify.toml` and security headers via `public/_headers` (see [Content Security Policy](#content-security-policy-netlify) above).
 
 - Production deploys from `main`
 - Deploy previews for pull requests
