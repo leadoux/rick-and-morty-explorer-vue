@@ -4,6 +4,7 @@ import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
+import { locationDetailGenericDescription } from '@/lib/seo'
 import { LOCATION_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
 
@@ -25,6 +26,15 @@ useHead(
     title: location.value?.name
       ? `${location.value.name} | Rick and Morty Explorer`
       : 'Location Details | Rick and Morty Explorer',
+    meta: [
+      {
+        name: 'description',
+        key: 'description',
+        content: location.value
+          ? `Location ${location.value.name}: type, dimension, and residents from Rick and Morty Explorer.`
+          : locationDetailGenericDescription,
+      },
+    ],
   })),
 )
 </script>

@@ -4,6 +4,7 @@ import AppButton from '@/components/AppButton.vue'
 import { useQuery } from '@urql/vue'
 import { useHead } from '@vueuse/head'
 import { handleImageError } from '@/lib/image'
+import { episodeDetailGenericDescription } from '@/lib/seo'
 import { EPISODE_DETAIL_QUERY } from '@/lib/queries'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useCompareStore } from '@/stores/compare'
@@ -29,6 +30,15 @@ useHead(
     title: episode.value?.name
       ? `${episode.value.episode} - ${episode.value.name} | Rick and Morty Explorer`
       : 'Episode Details | Rick and Morty Explorer',
+    meta: [
+      {
+        name: 'description',
+        key: 'description',
+        content: episode.value
+          ? `${episode.value.episode} ${episode.value.name}: air date, characters, and compare from Rick and Morty Explorer.`
+          : episodeDetailGenericDescription,
+      },
+    ],
   })),
 )
 </script>
