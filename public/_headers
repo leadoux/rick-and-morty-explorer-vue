@@ -2,8 +2,10 @@
 # CSP: if you point VITE_GRAPHQL_URL at another origin, add that origin to connect-src below.
 # HSTS: 1 year, subdomains, preload hint (submit site at https://hstspreload.org/ if you want inclusion).
 # COOP: isolate this origin’s top-level browsing context from cross-origin documents (opener/access).
+# Trusted Types: require-trusted-types-for 'script' restricts data passed to script-oriented DOM XSS sinks
+# (e.g. string arguments to eval / Function / setTimeout with code strings). Chromium enforces; Safari/Firefox may ignore until supported.
 
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self' https://rickandmortyapi.com; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self' https://rickandmortyapi.com; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests; require-trusted-types-for 'script'
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin
