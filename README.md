@@ -10,7 +10,7 @@ A Vue 3 + TypeScript project that demonstrates:
 - UX polish (responsive layouts, loading/error/empty states, dark mode)
 - Basic testing quality with Cypress smoke scenarios.
 
-> Project status: this repository is approximately **70% complete**.
+> Project status: this repository is approximately **90% complete**.
 
 Live app: [https://rm-vue.leadoux.dev](https://rm-vue.leadoux.dev)
 
@@ -77,6 +77,12 @@ pnpm test:e2e
 - Favorites persist through page reload.
 - Compare flow works with selected characters.
 - Theme preference persists after reload.
+
+## Lighthouse results
+<img width="400" height="125" alt="image" src="https://github.com/user-attachments/assets/87da4a85-a5fa-4a8f-9903-31e5b9b8f98c" />
+
+[Download and view the Lighhouse report](https://github.com/user-attachments/files/26538377/rm-vue.leadoux.dev-20260407T223505.html)
+
 
 ## Deployment
 
