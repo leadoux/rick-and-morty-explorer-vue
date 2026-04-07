@@ -13,11 +13,35 @@ let hasNavigated = false
 const pageTitle = computed(() => (route.meta.title as string) ?? 'Rick and Morty Explorer')
 const pageDescription = computed(() => route.meta.description ?? defaultSiteDescription)
 
+/** Known API avatar URL so the LCP image can be preloaded as soon as the route is known (before GraphQL returns). */
+const characterDetailLcpImageHref = computed(() => {
+  if (route.name !== 'character-detail') return undefined
+  const raw = route.params.id
+  const id = Array.isArray(raw) ? raw[0] : raw
+  if (!id || typeof id !== 'string') return undefined
+  return `https://rickandmortyapi.com/api/character/avatar/${id}.jpeg`
+})
+
 useHead(
-  computed(() => ({
-    title: pageTitle.value,
-    meta: [{ name: 'description', content: pageDescription.value, key: 'description' }],
-  })),
+  computed(() => {
+    const href = characterDetailLcpImageHref.value
+    const link = href
+      ? [
+          {
+            key: 'lcp-character-avatar',
+            rel: 'preload' as const,
+            as: 'image' as const,
+            href,
+            fetchpriority: 'high' as const,
+          },
+        ]
+      : []
+    return {
+      title: pageTitle.value,
+      meta: [{ name: 'description', content: pageDescription.value, key: 'description' }],
+      link,
+    }
+  }),
 )
 
 watch(
