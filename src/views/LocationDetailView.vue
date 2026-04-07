@@ -18,6 +18,8 @@ const { data, fetching, error } = useQuery({
 
 const location = computed(() => data.value?.location)
 
+const pageHeading = computed(() => location.value?.name ?? 'Location details')
+
 useHead(
   computed(() => ({
     title: location.value?.name
@@ -29,6 +31,7 @@ useHead(
 
 <template>
   <section>
+    <h1 class="page-heading">{{ pageHeading }}</h1>
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading location...
     </p>
@@ -37,7 +40,6 @@ useHead(
     </p>
 
     <article v-else-if="location" class="card">
-      <h1>{{ location.name }}</h1>
       <p class="meta">Type: {{ location.type || 'Unknown' }}</p>
       <p class="meta">Dimension: {{ location.dimension || 'Unknown' }}</p>
       <p class="meta">Residents: {{ location.residents.length }}</p>
@@ -75,6 +77,10 @@ useHead(
 </template>
 
 <style scoped>
+.page-heading {
+  margin: 0 0 0.75rem;
+}
+
 .meta {
   color: var(--text-secondary);
 }

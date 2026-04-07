@@ -20,6 +20,8 @@ const { data, fetching, error } = useQuery({
 
 const character = computed(() => data.value?.character)
 
+const pageHeading = computed(() => character.value?.name ?? 'Character details')
+
 useHead(
   computed(() => ({
     title: character.value?.name
@@ -31,6 +33,7 @@ useHead(
 
 <template>
   <section>
+    <h1 class="page-heading">{{ pageHeading }}</h1>
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading character...
     </p>
@@ -47,7 +50,6 @@ useHead(
         @error="handleImageError"
       />
       <div>
-        <h1>{{ character.name }}</h1>
         <p class="meta">Status: {{ character.status }}</p>
         <p class="meta">Species: {{ character.species }}</p>
         <p class="meta">Gender: {{ character.gender }}</p>
@@ -97,6 +99,10 @@ useHead(
 </template>
 
 <style scoped>
+.page-heading {
+  margin: 0 0 0.75rem;
+}
+
 .detail {
   display: grid;
   gap: 1rem;

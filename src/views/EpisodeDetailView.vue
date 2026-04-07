@@ -20,6 +20,10 @@ const { data, fetching, error } = useQuery({
 
 const episode = computed(() => data.value?.episode)
 
+const pageHeading = computed(() =>
+  episode.value ? `${episode.value.episode} - ${episode.value.name}` : 'Episode details',
+)
+
 useHead(
   computed(() => ({
     title: episode.value?.name
@@ -31,6 +35,7 @@ useHead(
 
 <template>
   <section>
+    <h1 class="page-heading">{{ pageHeading }}</h1>
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading episode...
     </p>
@@ -39,7 +44,6 @@ useHead(
     </p>
 
     <article v-else-if="episode" class="card">
-      <h1>{{ episode.episode }} - {{ episode.name }}</h1>
       <p class="meta">Air date: {{ episode.air_date }}</p>
       <p class="meta">Character count: {{ episode.characters.length }}</p>
 
@@ -90,6 +94,10 @@ useHead(
 </template>
 
 <style scoped>
+.page-heading {
+  margin: 0 0 0.75rem;
+}
+
 .meta {
   color: var(--text-secondary);
 }
