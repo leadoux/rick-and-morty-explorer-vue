@@ -1,0 +1,5 @@
+# Netlify custom headers (copied to dist/ by Vite).
+# CSP: if you point VITE_GRAPHQL_URL at another origin, add that origin to connect-src below.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://rickandmortyapi.com; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
