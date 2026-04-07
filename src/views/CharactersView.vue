@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useHead } from '@vueuse/head'
 import AppButton from '@/components/AppButton.vue'
 import PaginationControls from '@/components/PaginationControls.vue'
 import { useDebouncedValue } from '@/composables/useDebouncedValue'
@@ -94,28 +93,6 @@ const {
   }),
 })
 const hasNoResultsError = computed(() => isNoResultsError(error.value))
-
-const firstCharacterLcpImageHref = computed(() => characters.value[0]?.image)
-
-useHead(
-  computed(() => {
-    const href = firstCharacterLcpImageHref.value
-    if (!href) {
-      return { link: [] }
-    }
-    return {
-      link: [
-        {
-          key: 'lcp-characters-grid-first',
-          rel: 'preload' as const,
-          as: 'image' as const,
-          href,
-          fetchpriority: 'high' as const,
-        },
-      ],
-    }
-  }),
-)
 </script>
 
 <template>
@@ -195,7 +172,7 @@ useHead(
 
     <div v-else class="grid">
       <h2 class="section-heading">Character results ({{ totalCount }})</h2>
-      <article v-for="(character, index) in characters" :key="character.id" class="card">
+      <article v-for="character in characters" :key="character.id" class="card">
         <RouterLink
           class="image-link"
           :to="`/character/${character.id}`"
@@ -205,8 +182,7 @@ useHead(
             :src="character.image"
             :alt="character.name"
             class="avatar"
-            :fetchpriority="index === 0 ? 'high' : undefined"
-            :loading="index === 0 ? 'eager' : 'lazy'"
+            loading="lazy"
             decoding="async"
             @error="handleImageError"
           />

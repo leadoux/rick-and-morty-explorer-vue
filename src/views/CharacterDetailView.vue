@@ -55,7 +55,6 @@ useHead(
       <img
         :src="character.image"
         :alt="character.name"
-        fetchpriority="high"
         loading="eager"
         decoding="async"
         @error="handleImageError"
