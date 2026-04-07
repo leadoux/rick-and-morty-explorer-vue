@@ -21,38 +21,21 @@ const location = computed(() => data.value?.location)
 
 const pageHeading = computed(() => location.value?.name ?? 'Location details')
 
-const firstResidentLcpImageHref = computed(() => location.value?.residents[0]?.image)
-
 useHead(
-  computed(() => {
-    const href = firstResidentLcpImageHref.value
-    const link = href
-      ? [
-          {
-            key: 'lcp-location-resident-grid',
-            rel: 'preload' as const,
-            as: 'image' as const,
-            href,
-            fetchpriority: 'high' as const,
-          },
-        ]
-      : []
-    return {
-      title: location.value?.name
-        ? `${location.value.name} | Rick and Morty Explorer`
-        : 'Location Details | Rick and Morty Explorer',
-      meta: [
-        {
-          name: 'description',
-          key: 'description',
-          content: location.value
-            ? `Location ${location.value.name}: type, dimension, and residents from Rick and Morty Explorer.`
-            : locationDetailGenericDescription,
-        },
-      ],
-      link,
-    }
-  }),
+  computed(() => ({
+    title: location.value?.name
+      ? `${location.value.name} | Rick and Morty Explorer`
+      : 'Location Details | Rick and Morty Explorer',
+    meta: [
+      {
+        name: 'description',
+        key: 'description',
+        content: location.value
+          ? `Location ${location.value.name}: type, dimension, and residents from Rick and Morty Explorer.`
+          : locationDetailGenericDescription,
+      },
+    ],
+  })),
 )
 </script>
 
@@ -84,13 +67,12 @@ useHead(
 
       <h2>Residents</h2>
       <div class="grid">
-        <article v-for="(resident, index) in location.residents" :key="resident.id" class="card resident">
+        <article v-for="resident in location.residents" :key="resident.id" class="card resident">
           <RouterLink class="image-link" :to="`/character/${resident.id}`" :aria-label="`Open ${resident.name}`">
             <img
               :src="resident.image"
               :alt="resident.name"
-              :fetchpriority="index === 0 ? 'high' : undefined"
-              :loading="index === 0 ? 'eager' : 'lazy'"
+              loading="lazy"
               decoding="async"
               @error="handleImageError"
             />

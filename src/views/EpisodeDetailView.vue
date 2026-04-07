@@ -25,38 +25,21 @@ const pageHeading = computed(() =>
   episode.value ? `${episode.value.episode} - ${episode.value.name}` : 'Episode details',
 )
 
-const firstEpisodeCharacterImageHref = computed(() => episode.value?.characters[0]?.image)
-
 useHead(
-  computed(() => {
-    const href = firstEpisodeCharacterImageHref.value
-    const link = href
-      ? [
-          {
-            key: 'lcp-episode-character-grid',
-            rel: 'preload' as const,
-            as: 'image' as const,
-            href,
-            fetchpriority: 'high' as const,
-          },
-        ]
-      : []
-    return {
-      title: episode.value?.name
-        ? `${episode.value.episode} - ${episode.value.name} | Rick and Morty Explorer`
-        : 'Episode Details | Rick and Morty Explorer',
-      meta: [
-        {
-          name: 'description',
-          key: 'description',
-          content: episode.value
-            ? `${episode.value.episode} ${episode.value.name}: air date, characters, and compare from Rick and Morty Explorer.`
-            : episodeDetailGenericDescription,
-        },
-      ],
-      link,
-    }
-  }),
+  computed(() => ({
+    title: episode.value?.name
+      ? `${episode.value.episode} - ${episode.value.name} | Rick and Morty Explorer`
+      : 'Episode Details | Rick and Morty Explorer',
+    meta: [
+      {
+        name: 'description',
+        key: 'description',
+        content: episode.value
+          ? `${episode.value.episode} ${episode.value.name}: air date, characters, and compare from Rick and Morty Explorer.`
+          : episodeDetailGenericDescription,
+      },
+    ],
+  })),
 )
 </script>
 
@@ -101,13 +84,12 @@ useHead(
 
       <h2>Characters</h2>
       <div class="grid">
-        <article v-for="(character, index) in episode.characters" :key="character.id" class="card resident">
+        <article v-for="character in episode.characters" :key="character.id" class="card resident">
           <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
             <img
               :src="character.image"
               :alt="character.name"
-              :fetchpriority="index === 0 ? 'high' : undefined"
-              :loading="index === 0 ? 'eager' : 'lazy'"
+              loading="lazy"
               decoding="async"
               @error="handleImageError"
             />
