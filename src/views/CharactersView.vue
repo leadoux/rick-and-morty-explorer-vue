@@ -102,10 +102,20 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       Browse every character with URL-synced filters and compare-ready cards.
     </p>
 
-    <div class="card filters">
+    <fieldset class="card filters">
+      <legend class="sr-only">Character filters</legend>
+      <p id="characters-text-filter-hint" class="sr-only">
+        Type at least 2 letters to search by name or species.
+      </p>
       <label class="filter-field" for="character-name-filter">
         <span class="filter-label">Name</span>
-        <input id="character-name-filter" v-model="name" class="input" placeholder="Name" />
+        <input
+          id="character-name-filter"
+          v-model="name"
+          class="input"
+          placeholder="Name"
+          aria-describedby="characters-text-filter-hint"
+        />
       </label>
       <label class="filter-field" for="character-status-filter">
         <span class="filter-label">Status</span>
@@ -123,6 +133,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
           v-model="species"
           class="input"
           placeholder="Species"
+          aria-describedby="characters-text-filter-hint"
         />
       </label>
       <label class="filter-field" for="character-gender-filter">
@@ -135,8 +146,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
           <option value="unknown">Unknown</option>
         </select>
       </label>
-      <AppButton variant="secondary" @click="resetFilters">Reset</AppButton>
-    </div>
+      <AppButton variant="secondary" type="button" aria-label="Reset character filters" @click="resetFilters">
+        Reset
+      </AppButton>
+    </fieldset>
 
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading characters...

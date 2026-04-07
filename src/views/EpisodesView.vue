@@ -92,10 +92,18 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       Browse episodes by name or season, then jump into details or comparison.
     </p>
 
-    <div class="card filters">
+    <fieldset class="card filters">
+      <legend class="sr-only">Episode filters</legend>
+      <p id="episodes-name-filter-hint" class="sr-only">Type at least 2 letters to search by episode name.</p>
       <label class="filter-field" for="episode-name-filter">
         <span class="filter-label">Episode name</span>
-        <input id="episode-name-filter" v-model="name" class="input" placeholder="Episode name" />
+        <input
+          id="episode-name-filter"
+          v-model="name"
+          class="input"
+          placeholder="Episode name"
+          aria-describedby="episodes-name-filter-hint"
+        />
       </label>
       <label class="filter-field" for="episode-season-filter">
         <span class="filter-label">Season</span>
@@ -106,7 +114,7 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
           </option>
         </select>
       </label>
-    </div>
+    </fieldset>
 
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading episodes...

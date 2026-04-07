@@ -147,6 +147,16 @@ h3 {
   font-size: 0.85rem;
 }
 
+fieldset.filters {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+fieldset.filters legend {
+  padding: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:focus-within {
     scroll-behavior: auto;

@@ -94,14 +94,30 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
     <h1>Locations Explorer</h1>
     <p class="description">Filter by location type and dimension for quick world discovery.</p>
 
-    <div class="card filters">
+    <fieldset class="card filters">
+      <legend class="sr-only">Location filters</legend>
+      <p id="locations-text-filter-hint" class="sr-only">
+        Type at least 2 letters for name, type, and dimension filters.
+      </p>
       <label class="filter-field" for="location-name-filter">
         <span class="filter-label">Location name</span>
-        <input id="location-name-filter" v-model="name" class="input" placeholder="Location name" />
+        <input
+          id="location-name-filter"
+          v-model="name"
+          class="input"
+          placeholder="Location name"
+          aria-describedby="locations-text-filter-hint"
+        />
       </label>
       <label class="filter-field" for="location-type-filter">
         <span class="filter-label">Type</span>
-        <input id="location-type-filter" v-model="type" class="input" placeholder="Type" />
+        <input
+          id="location-type-filter"
+          v-model="type"
+          class="input"
+          placeholder="Type"
+          aria-describedby="locations-text-filter-hint"
+        />
       </label>
       <label class="filter-field" for="location-dimension-filter">
         <span class="filter-label">Dimension</span>
@@ -110,9 +126,10 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
           v-model="dimension"
           class="input"
           placeholder="Dimension"
+          aria-describedby="locations-text-filter-hint"
         />
       </label>
-    </div>
+    </fieldset>
 
     <p v-if="fetching" class="hint" role="status" aria-live="polite" aria-atomic="true">
       Loading locations...
