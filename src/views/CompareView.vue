@@ -32,10 +32,16 @@ const canCompare = computed(() => {
     <div v-else-if="tab === 'characters'" class="compare-grid">
       <h2 class="section-heading">Character comparison ({{ compareStore.characters.length }})</h2>
       <article v-for="character in compareStore.characters" :key="character.id" class="card">
-        <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
+        <RouterLink
+          class="image-link character-portrait-link"
+          :to="`/character/${character.id}`"
+          :aria-label="`Open ${character.name}`"
+        >
           <img
             :src="character.image"
             :alt="character.name"
+            width="300"
+            height="300"
             loading="lazy"
             decoding="async"
             @error="handleImageError"
@@ -74,11 +80,6 @@ const canCompare = computed(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
-}
-
-img {
-  width: 100%;
-  border-radius: 0.7rem;
 }
 
 .image-link {

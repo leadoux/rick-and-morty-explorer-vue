@@ -28,13 +28,15 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
       <article v-for="item in favoritesStore.items" :key="`${item.kind}:${item.id}`" class="card">
         <RouterLink
           v-if="item.image"
-          class="image-link"
+          class="image-link character-portrait-link"
           :to="pathFor(item.kind, item.id)"
           :aria-label="`Open ${item.name}`"
         >
           <img
             :src="item.image"
             :alt="item.name"
+            width="300"
+            height="300"
             loading="lazy"
             decoding="async"
             @error="handleImageError"
@@ -55,11 +57,6 @@ const pathFor = (kind: 'character' | 'episode' | 'location', id: string) => {
 .description,
 .meta {
   color: var(--text-secondary);
-}
-
-img {
-  width: 100%;
-  border-radius: 0.7rem;
 }
 
 .image-link {

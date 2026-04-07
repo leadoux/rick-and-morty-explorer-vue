@@ -174,14 +174,15 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
       <h2 class="section-heading">Character results ({{ totalCount }})</h2>
       <article v-for="character in characters" :key="character.id" class="card">
         <RouterLink
-          class="image-link"
+          class="image-link character-portrait-link"
           :to="`/character/${character.id}`"
           :aria-label="`Open ${character.name}`"
         >
           <img
             :src="character.image"
             :alt="character.name"
-            class="avatar"
+            width="300"
+            height="300"
             loading="lazy"
             decoding="async"
             @error="handleImageError"
@@ -234,12 +235,6 @@ const hasNoResultsError = computed(() => isNoResultsError(error.value))
 <style scoped>
 .description {
   color: var(--text-secondary);
-}
-
-.avatar {
-  width: 100%;
-  border-radius: 0.7rem;
-  margin-bottom: 0.5rem;
 }
 
 .image-link {

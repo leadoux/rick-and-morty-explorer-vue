@@ -85,10 +85,16 @@ useHead(
       <h2>Characters</h2>
       <div class="grid">
         <article v-for="character in episode.characters" :key="character.id" class="card resident">
-          <RouterLink class="image-link" :to="`/character/${character.id}`" :aria-label="`Open ${character.name}`">
+          <RouterLink
+            class="image-link character-portrait-link"
+            :to="`/character/${character.id}`"
+            :aria-label="`Open ${character.name}`"
+          >
             <img
               :src="character.image"
               :alt="character.name"
+              width="300"
+              height="300"
               loading="lazy"
               decoding="async"
               @error="handleImageError"
@@ -116,11 +122,6 @@ useHead(
   margin: 0.8rem 0;
   display: flex;
   gap: 0.5rem;
-}
-
-.resident img {
-  width: 100%;
-  border-radius: 0.7rem;
 }
 
 .image-link {

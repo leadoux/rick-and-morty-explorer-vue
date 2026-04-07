@@ -55,6 +55,8 @@ useHead(
       <img
         :src="character.image"
         :alt="character.name"
+        width="300"
+        height="300"
         loading="eager"
         decoding="async"
         @error="handleImageError"
@@ -121,7 +123,11 @@ useHead(
 
 img {
   width: min(100%, 360px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
   border-radius: 0.8rem;
+  display: block;
 }
 
 .meta {
