@@ -43,7 +43,14 @@ const isCurrentPath = (path: string) => route.path === path
       </nav>
       <div class="actions">
         <GlobalSearch />
-        <AppButton variant="secondary" @click="preferencesStore.toggleTheme">
+        <AppButton
+          class="theme-toggle"
+          variant="secondary"
+          type="button"
+          :aria-pressed="isDarkMode ? 'true' : 'false'"
+          :aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+          @click="preferencesStore.toggleTheme"
+        >
           {{ isDarkMode ? 'Light' : 'Dark' }} mode
         </AppButton>
       </div>
@@ -100,6 +107,10 @@ const isCurrentPath = (path: string) => route.path === path
   gap: 0.75rem;
   align-items: center;
   justify-content: space-between;
+}
+
+.actions :deep(.theme-toggle) {
+  white-space: nowrap;
 }
 
 .badge {
