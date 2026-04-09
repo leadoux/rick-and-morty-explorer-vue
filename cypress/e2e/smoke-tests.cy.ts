@@ -94,7 +94,14 @@ const graphQlFixture = (req: Cypress.Request) => {
           results: [{ id: '1', name: 'Pilot', episode: 'S01E01', air_date: 'December 2, 2013' }],
         },
         locations: {
-          results: [{ id: '20', name: 'Earth (Replacement Dimension)', type: 'Planet', dimension: 'Replacement Dimension' }],
+          results: [
+            {
+              id: '20',
+              name: 'Earth (Replacement Dimension)',
+              type: 'Planet',
+              dimension: 'Replacement Dimension',
+            },
+          ],
         },
       },
     })
@@ -137,15 +144,17 @@ describe('Rick and Morty Explorer smoke tests', () => {
 
   it('persists dark mode preference', () => {
     cy.visit('/characters')
-    cy.document().its('documentElement.dataset.theme').then((initialTheme) => {
-      cy.contains('button', /mode/).click()
-      cy.document()
-        .its('documentElement.dataset.theme')
-        .then((toggledTheme) => {
-          expect(toggledTheme).not.to.eq(initialTheme)
-          cy.reload()
-          cy.document().its('documentElement.dataset.theme').should('eq', toggledTheme)
-        })
-    })
+    cy.document()
+      .its('documentElement.dataset.theme')
+      .then((initialTheme) => {
+        cy.contains('button', /mode/).click()
+        cy.document()
+          .its('documentElement.dataset.theme')
+          .then((toggledTheme) => {
+            expect(toggledTheme).not.to.eq(initialTheme)
+            cy.reload()
+            cy.document().its('documentElement.dataset.theme').should('eq', toggledTheme)
+          })
+      })
   })
 })
