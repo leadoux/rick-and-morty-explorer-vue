@@ -59,7 +59,7 @@ The site sends a **`Content-Security-Policy`** and **`Strict-Transport-Security`
 - **GraphQL origin:** `connect-src` allows `https://rickandmortyapi.com` (see [`src/main.ts`](src/main.ts)). If you set **`VITE_GRAPHQL_URL`** in Netlify to a different origin (your own proxy), **add that origin’s scheme and host** to `connect-src` in `public/_headers` or API calls will be blocked by the browser.
 - **Optional rollout:** you can temporarily deploy the same policy as **`Content-Security-Policy-Report-Only`** (and a reporting endpoint) to log violations before enforcing; keep a single source of truth so you do not ship duplicate conflicting CSP headers.
 
-**After deploy, verify manually:** open DevTools → Network → document response → confirm `Content-Security-Policy` and `Strict-Transport-Security`. Exercise list pages, detail pages, global search, pagination, images, and theme toggle. Repeat on a deploy preview if you use PR previews.
+**After deploy, verify manually:** open DevTools → Network → document response → confirm `Content-Security-Policy` and `Strict-Transport-Security`. Exercise list pages, detail pages, global search, pagination, images, and theme toggle. Repeat on a deploy preview if you use PR previews..
 
 ## Quality Checks
 
@@ -79,10 +79,10 @@ pnpm test:e2e
 - Theme preference persists after reload.
 
 ## Lighthouse results
+
 <img width="400" height="125" alt="image" src="https://github.com/user-attachments/assets/87da4a85-a5fa-4a8f-9903-31e5b9b8f98c" />
 
 [Download and view the Lighhouse report](https://github.com/user-attachments/files/26538377/rm-vue.leadoux.dev-20260407T223505.html)
-
 
 ## Deployment
 
