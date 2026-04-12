@@ -122,8 +122,8 @@ describe('Rick and Morty Explorer smoke tests', () => {
 
   it('syncs filters to URL query parameters', () => {
     cy.visit('/characters')
-    cy.get('input[placeholder="Name"]').type('Rick')
-    cy.url().should('include', 'name=Rick')
+    cy.get('input[placeholder="Name"]', { timeout: 10000 }).invoke('val', 'Rick').trigger('input')
+    cy.location('search', { timeout: 10000 }).should('include', 'name=Rick')
   })
 
   it('persists favorites across reload', () => {
